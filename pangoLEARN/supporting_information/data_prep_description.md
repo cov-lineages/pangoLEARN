@@ -12,3 +12,5 @@ The phylogeny is annotated with lineage and then in `FigTree` the lineages are m
 
 - The lineage may have been defined earlier in the outbreak and with added sequence data, there is less support for that lineage. In these cases the associated epidemiological metadata is examined and the lineage may be refined or even dropped entirely. The lineage number will not be 'recycled', but the members will get reassigned the parent lineage designation.
 - The lineage may have very clear epidemiological support and ambiguities or homoplasies in the sequences/ tree could contribute to low bootstrap values. In these cases, if the support is strong, the lineages are called. Recall rates for these lingeages within `pangolin` may be lower however.
+
+
