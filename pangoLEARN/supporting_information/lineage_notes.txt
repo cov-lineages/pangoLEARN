@@ -10,7 +10,7 @@ A.5	A lineage with a lot of representation from Spanish-speaking countries. A ma
 A.6	Lineage in Thailand (BS=65)
 A.7	Indian lineage, previously A.p7. Some in A.p7, including Saudi Arabian & Turkish sequences reassigned to A (BS=100)
 A.8	Indian lineage with good support and despite small numbers shows internal diversity, previously A.p7 (BS=83)
-A.9 Indian lineage, previously A.p7 (BS=85)
+A.9	Indian lineage, previously A.p7 (BS=85)
 B	Base of this lineage also lies in China, with many global exports, two distinct SNPs `8782TC` and `28144CT` define this lineage
 B.1	A large European lineage that corresponds to the Italian outbreak.
 B.1.2	USA lineage, split up a bit, refined it
@@ -22,7 +22,7 @@ B.1.5.3	English lineage (now containing an Australian & Swedish seqeuence)
 B.1.5.5	English lineage
 B.1.5.6	Scottish lineage
 B.1.5.8	US lineage
-B.1.5.9 Welsh lineage 
+B.1.5.9	Welsh lineage 
 B.1.5.10	UK lineage
 B.1.6	Belgian lineage 
 B.1.8	Netherlands/ Europe
