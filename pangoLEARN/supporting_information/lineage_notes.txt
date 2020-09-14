@@ -133,6 +133,7 @@ B.1.9	Netherlands/ Belgium/ Turkey/ DRC
 B.1.11	UK lineage, pruned down relative to previous release. A number of sequences previously assigned B.1.11 reassigned to B.1 and some reassigned to B.1.88. 
 B.1.12	BeNeLux/ UK lineage
 B.1.13	UK lineage
+B.1.14	USA lineage
 *B.1.p16	Belgium lineage, reassigned to B.1
 B.1.19	USA lineage (WI)
 B.1.21	Washington (USA) 
@@ -221,7 +222,7 @@ B.1.127	Ukraine/ Latvian lineage
 B.1.128	European/ DRC lineage
 B.1.129	Swedish lineage
 B.1.130	Saudi Arabian lineage, some sequences had previously been assigned B.1.36. Possible that it may be reassigned B.1.36 again in future due to uncertainty in ML searching.
-B.1.131 Ukraine lineage
+B.1.131	Ukraine lineage
 B.1.132	Indian lineage, some sequences previously assigned B.1.36 & B.1.113. Possible that it may be reassigned B.1.36 again in future due to uncertainty in ML searching.
 B.1.133	South African lineage
 B.1.134	USA lineage (OR)
@@ -244,13 +245,14 @@ B.1.150	Indian lineage with very long branch Iran sequence
 B.1.151	UK lineage
 B.1.152	English lineage
 B.1.153	English lineage with some Australian, New Zealand and European sequences
+B.1.154	USA lineage
 B.1.155	USA (WA) lineage
 B.1.156	Scottish lineage
 B.1.157	UK lineage with some European sequences
 B.1.158	Finland lineage
 B.1.159	France/ Bangladesh lineage 
 B.1.160	Previously part of B.1.36: Tukey, India Saudi Arabia lineage (split in the most recent phylogeny)
-B.1.160.1 English lineage nested in diversity of B.1.160
+B.1.160.1	English lineage nested in diversity of B.1.160
 B.1.161	USA lineage (OR)
 B.1.162	USA lineage (WI)
 B.1.163	USA lineage (CA & OR)
@@ -267,6 +269,7 @@ B.1.173	USA lineage (WA) (also Sierra Leone)
 B.1.174	English lineage
 B.1.175	English lineage (CAMB)
 B.1.176	English lineage (SHEF)
+B.2	European lineage
 B.2.1	Large lineage majoritively from UK and Australia with representation from Europe, Jordan, USA, India, Ghana (BS=21) 
 B.2.2	Lineage with representation from UK/ USA/ Australia
 B.2.4	England/ Australia/ New Zealand lineage (BS=94)
