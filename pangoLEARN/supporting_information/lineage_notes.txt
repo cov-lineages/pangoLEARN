@@ -41,8 +41,6 @@ B.1.1.22	South African lineage
 *B.1.1.23	Bangladesh lineage, merged into B.1.1.25 in most recent phylogeny
 B.1.1.24	Portuguese lineage
 B.1.1.25	Bangladesh lineage
-B.1.1.25.1	Australian lineage
-B.1.1.25.2	UK lineage
 B.1.1.26	US lineage (WA)
 B.1.1.27	Lineage in Oman
 B.1.1.28	Brazil lineage, some sister sequences from parent node are also from Brazil, however there's sequences from a variety of other locations on that node.
@@ -312,3 +310,5 @@ B.27	English lineage
 C.1	South African lineage (Alias of B.1.1.1.1)
 C.2	South African lineage (Alias of B.1.1.1.2)
 C.3	English lineage (Alias of B.1.1.1.3)
+D.1	UK lineage (Alias of B.1.1.25.2)
+D.2	Australian lineage (Alias of B.1.1.25.1)
