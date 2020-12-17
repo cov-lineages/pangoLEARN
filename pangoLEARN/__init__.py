@@ -1,2 +1,2 @@
 _program = "pangoLEARN"
-__version__ = "2020-11-30_2"
+__version__ = "2020-12-17"
