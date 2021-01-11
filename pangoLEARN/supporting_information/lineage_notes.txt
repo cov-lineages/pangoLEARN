@@ -727,6 +727,7 @@ B.1.372	Danish lineage
 B.1.373	Swedish lineage
 B.1.374	European lineage
 B.1.374.1	Bangladesh lineage
+B.1.375	US lineage circulating in Connecticut with the 69-70del, which leads to SGTF. However, they express 484E and 501N in their spike proteins.
 *B.2.1	Reassigned to B.40
 *B.2.6	Reassigned to B.35
 *B.2.10	Reassigned to B.41
