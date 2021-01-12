@@ -29,7 +29,7 @@ B.1.1.3	English lineage
 B.1.1.4	UK lineage
 B.1.1.5		Iceland/ Belgium/ UK 
 B.1.1.6		USA (TX)
-B.1.1.7		UK lineage, associated with the N501Y mutation
+B.1.1.7		UK lineage of concern, associated with the N501Y mutation. More information can be found at cov-lineages.org/global_report.html
 B.1.1.8		UK/ Indian lineage
 B.1.1.10	European lineage
 B.1.1.12	UK lineage
@@ -65,9 +65,9 @@ B.1.1.48	Japanese lineage
 B.1.1.49	Wales lineage
 B.1.1.50	UK/ Israel/ Palestine lineage
 B.1.1.51	UK lineage
-B.1.1.52	South African (contains several B.1.1.54)
+B.1.1.52	South African 
 B.1.1.53	South African lineage
-B.1.1.54	European lineage
+B.1.1.54	South African lineage
 B.1.1.55	UK lineage
 B.1.1.56	South African lineage
 B.1.1.57	South African lineage, a few English sequences, one Zimbabwe
@@ -258,7 +258,6 @@ B.1.1.244	USA and Mexico
 B.1.1.245	Northern Ireland lineage, previously B.1.1.60 (split)
 B.1.1.246	Russia
 B.1.1.247	Northern Europe (UK, NL, Switzerland) and Northern Africa (Egypt and Morocco), Gambia (some B.1.1.55)
-B.1.1.248	Brazilian lineage, previously part of B.1.1.28
 B.1.1.249	Wales lineage
 B.1.1.250	UK lineage
 B.1.1.251	UK and US
@@ -703,7 +702,7 @@ B.1.347	Canadian lineage, previously part of B.1.114 lineage
 B.1.348	USA lineage
 B.1.349	USA lineage
 B.1.350	Canadian lineage
-B.1.351	USA lineage
+B.1.351	South African lineage defined by new variant 501Y.V2 - A more detailed description of the lineage is here and a preprint describing the variant is here: https://www.medrxiv.org/content/10.1101/2020.12.21.20248640v1.
 B.1.352	USA lineage (CA)
 B.1.353	European lineage
 B.1.354	Danish lineage
@@ -728,6 +727,7 @@ B.1.372	Danish lineage
 B.1.373	Swedish lineage
 B.1.374	European lineage
 B.1.374.1	Bangladesh lineage
+B.1.375	US lineage circulating in Connecticut with the 69-70del, which leads to SGTF. However, they express 484E and 501N in their spike proteins.
 *B.2.1	Reassigned to B.40
 *B.2.6	Reassigned to B.35
 *B.2.10	Reassigned to B.41
