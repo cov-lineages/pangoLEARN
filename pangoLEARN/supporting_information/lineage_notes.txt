@@ -818,3 +818,5 @@ N.1	Alias of B.1.1.33.1, USA lineage
 N.2	Alias of B.1.1.33.2, French lineage
 N.3	Alias of B.1.1.33.3, Argentinian lineage
 N.4	Alias of B.1.1.33.4, Chilean lineage
+P.1	Alias of B.1.1.28.1, Brazilian lineage with a number of spike mutaions with likely functional significance E484K, K417T, and N501Y. Described in https://virological.org/t/genomic-characterisation-of-an-emergent-sars-cov-2-lineage-in-manaus-preliminary-findings/586.
+P.2	Alias of B.1.1.28.2, Brazilian lineage
