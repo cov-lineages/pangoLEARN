@@ -1,2 +1,2 @@
-_program = "pangoLEARN"
-__version__ = "2021-01-16"
+git _program = "pangoLEARN"
+__version__ = "2021-01-20"
