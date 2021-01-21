@@ -815,7 +815,7 @@ B.1.425	USA lineage (UT), reassigned from part of B.1.370
 B.1.426	USA lineage (UT), reassigned from part of B.1.2
 B.1.427	USA lineage (CA)
 B.1.428	Danish lineage (amalgam of Danish sequences from B.1.358, B.1.288, B.1.262)
-B.1.429	USA lineage (CA, amalgam of B.1.328, B.1.358, B.1.354, B.1.298, B.1.370, B.1.288, B.1.324)
+B.1.429	A lineage predominantly circulating in California but with exports to other countries. Characterised by the spike L452R mutation but also has spike:W152C orf1ab:D5584Y and N:T205I.
 B.1.431	Scottish lineage
 B.1.432	USA lineage (TX)
 B.1.433	USA lineage (MA)
