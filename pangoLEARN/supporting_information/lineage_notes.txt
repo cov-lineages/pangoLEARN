@@ -8,18 +8,29 @@ A.2.3	Scottish lineage nested within the diversity of A.2
 A.2.4	Panama lineage
 A.3	USA lineage 
 A.4	USA lineage nested in A diversity
-A.5	A lineage with a lot of representation from Spanish-speaking countries. A Spanish/ South-American lineage, but now with sequences from an outbreak in Scotland
+A.5	A lineage with a lot of representation from Spanish-speaking countries. A Spanish/ South-American lineage, but now with sequences from an outbreak in Scotland. Also now includes what was previously A.10.
 A.6	Lineage from an introduction event into Thailand
 A.7	Indian lineage
 *A.8	Indian lineage merged with A.9
 A.9	Indian lineage
-A.10	Spanish lineage
+*A.10	Spanish lineage reassigned to A.5
 A.11	Ghana/ Senegal lineage
 A.12	Sierra Leone lineage
 A.13	Cote d'Ivoire lineage
 A.14	Cote d'Ivoire lineage
 A.15	Sweden/ Denmark lineage
 A.16	Japanese lineage
+A.17	French lineage
+A.18	Cote d'Ivoire lineage
+A.19	Cote d'Ivoire/ Burkina Faso lineage
+A.20	UAE lineage
+A.21	West African lineage
+A.22	UAE lineage
+A.23	Ugandan lineage 
+A.23.1	International lineage with a number of variants of potential biological concern, including 681R
+A.24	South Korean lineage
+A.25	Ugandan lineage
+A.26	UK lineage
 B	Base of this lineage also lies in China, with many global exports, two distinct SNPs `8782TC` and `28144CT` define this lineage
 B.1	A large European lineage that corresponds to the Italian outbreak.
 *B.1.1	Reassigned in the current tree. European lineage with 3 clear SNPs `28881GA`,`28882GA`,`28883GC`
