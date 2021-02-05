@@ -337,6 +337,8 @@ B.1.1.312	Jordan lineage
 B.1.1.313	English lineage
 B.1.1.314	Brazilian lineage, previously part of B.1.1.33
 B.1.1.315	Previously D.1, UK/ UAE lineage
+B.1.1.316	International lineage with E484K mutation
+B.1.1.317	Russian lineage
 B.1.2	USA lineage
 B.1.3	USA lineage 
 *B.1.3.1	South Korean lineage
