@@ -997,6 +997,7 @@ C.12	Alias of B.1.1.1.12,New Zealand lineage
 C.13	Alias of B.1.1.1.13, Peru lineage
 C.14	Alias of B.1.1.1.14, Peru lineage
 C.15	Alias of B.1.1.1.15, Denmark lineage
+C.16	Alias of B.1.1.1.16, Portuguese lineage
 D.2	Australian lineage, Alias of B.1.1.25.1
 D.3	Australian lineage, alias of B.1.1.25.3
 *E.1	Reassigned B.1.416.1. French lineage within the diversity of a Senegal/ Gambia lineage
