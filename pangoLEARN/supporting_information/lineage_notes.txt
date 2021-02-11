@@ -923,6 +923,7 @@ B.1.520	Germany, Norway, England
 B.1.521	USA lineage (TX)
 B.1.523	Reassigned from B.1.160, which split in the tree. Turkey, Saudi_Arabia and European lineage.
 B.1.524	Malaysian lineage
+B.1.525	Nigerian, Ghanaian and international lineage with E484K, del69-70 among other defining mutations.
 *B.2.1	Reassigned to B.40
 *B.2.6	Reassigned to B.35
 *B.2.10	Reassigned to B.41
