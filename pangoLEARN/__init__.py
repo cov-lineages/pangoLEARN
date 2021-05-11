@@ -1,3 +1,3 @@
 _program = "pangoLEARN"
-__version__ = "2021-04-28"
-PANGO_VERSION = "1.1.23"
+__version__ = "2021-05-10"
+PANGO_VERSION="1.2"
