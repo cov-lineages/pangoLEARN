@@ -2,11 +2,39 @@ import csv
 from Bio import SeqIO
 import os
 import collections
+import hashlib
+import collections
+import csv
+from Bio import SeqIO
+from pangoLEARN.training import downsample
+
+def get_hash_string(record):
+    seq = str(record.seq).upper().encode()
+    hash_object = hashlib.md5(seq)
+    hash_string = hash_object.hexdigest()
+    return hash_string
+
+def get_dict(in_csv,name_column,data_column):
+    this_dict = {}
+    with open(in_csv,"r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            this_dict[row[name_column]] = row[data_column]
+    return this_dict
+
+def add_to_hash(seq_file):
+    hash_map = {}
+    seq_hash = {}
+    for record in SeqIO.parse(seq_file, "fasta"):
+        seq = str(record.seq).upper().encode()
+        hash_object = hashlib.md5(seq)
+        hash_map[hash_object.hexdigest()] = record.id
+        seq_hash[str(record.seq)] = record.id
+    return hash_map,seq_hash
 
 
 config["trim_start"] = 265
 config["trim_end"] = 29674
-config["lineages_of_concern"] = ["B.1.1.7","B.1.351","P.1","P.2"]
 config["outgroups"] = "/raid/shared/grinch/grinch/data/outgroups.csv"
 config["genbank_ref"] = "/raid/shared/grinch/grinch/data/WH04.gb"
 
@@ -14,7 +42,8 @@ rule all:
     input:
         os.path.join(config["outdir"],"alignment.filtered.fasta"),
         os.path.join(config["outdir"],"decision_tree_rules.txt"),
-        os.path.join(config["outdir"],"pangolearn.init.py")
+        os.path.join(config["outdir"],"pangolearn.init.py"),
+        os.path.join(config["outdir"],"lineage.hash.csv")
 
 rule make_init:
     output:
@@ -149,16 +178,16 @@ rule downsample:
     output:
         csv = os.path.join(config["outdir"],"metadata.copy.csv"),
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta")
-    shell:
-        """
-        python /raid/shared/grinch/grinch/scripts/downsample.py --in-fasta {input.fasta} \
-        --in-metadata {input.csv} \
-        --downsample_lineage_size 10 \
-        --diff 1 \
-        --out-fasta {output.fasta} \
-        --outgroups {config[outgroups]} \
-        --out-metadata {output.csv}
-        """
+    run:
+        downsample.downsample(
+            input.csv, 
+            output.csv, 
+            input.fasta, 
+            output.fasta, 
+            1, config["outgroups"], 
+            False 
+            False, 
+            10)
 
 rule filter_metadata:
     input:
@@ -192,7 +221,7 @@ rule run_training:
         txt = os.path.join(config["outdir"],"training_summary.txt")
     shell:
         """
-        python /raid/shared/grinch/grinch/scripts/pangoLEARNDecisionTree_v1.py \
+        python /home/shared/pangoLEARN/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \
@@ -207,7 +236,7 @@ rule get_recall:
         txt = os.path.join(config["outdir"],"lineage_recall_report.txt")
     shell:
         """
-        python /raid/shared/grinch/grinch/scripts/processOutputFile.py {input.txt} > {output.txt}
+        python /home/shared/pangoLEARN/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
         """
 
 rule get_decisions:
@@ -219,7 +248,39 @@ rule get_decisions:
         txt = os.path.join(config["outdir"],"decision_tree_rules.txt")
     shell:
         """
-        python /raid/shared/grinch/grinch/scripts/getDecisionTreeRules.py \
+        python /home/shared/pangoLEARN/pangoLEARN/training/getDecisionTreeRules.py \
         {input.model:q} {input.headers:q} {input.txt:q} \
         > {output.txt:q}
         """
+
+rule create_hash:
+    input:
+        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        lin_designation = os.path.join(config["outdir"],"lineages.designated.csv")
+    output:
+        csv = os.path.join(config["outdir"],"lineage.hash.csv"),
+        fasta = os.path.join(config["outdir"],"lineage.hash.fasta"),
+        hashed_designations = os.path.join(config["outdir"],"designations.hash.csv")
+    run:
+        designated = get_dict(input.lin_designation,"sequence_name","lineage")
+
+        hash_map,seq_hash_dict = add_to_hash(input.fasta)
+
+        with open(output.csv,"w") as fw:
+            fw.write("seq_hash,set_name\n")
+            for seq_hash in hash_map:
+                seq_name = hash_map[seq_hash]
+                set_name = designated[seq_name]
+                fw.write(f"{seq_hash},{set_name}\n")
+        
+        num_seqs = 0
+        with open(output.hashed_designations, "w") as fw2:
+            fw2.write("taxon,lineage\n")
+            with open(output.fasta, "w") as fw:
+                for seq in seq_hash_dict:
+                    num_seqs +=1
+                    fw.write(f">{seq_hash_dict[seq]}\n{seq}\n")
+                    fw2.write(f"{seq_hash_dict[seq]},{designated[seq_hash_dict[seq]]}\n")
+
+        print(green("Number of seqs going into training: "),f"{num_seqs}")
+    

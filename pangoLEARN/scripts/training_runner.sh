@@ -25,6 +25,7 @@ cp /raid/shared/pangolearn_training/$OUTDIR/decision* /home/shared/pangoLEARN/pa
 cp /raid/shared/pangolearn_training/$OUTDIR/metadata.downsample.csv /home/shared/pangoLEARN/pangoLEARN/data/lineages.downsample.csv
 cp /raid/shared/pangolearn_training/$OUTDIR/lineages.metadata.csv /home/shared/pango-designation/lineages.metadata.csv
 cp /raid/shared/pangolearn_training/$OUTDIR/lineages.metadata.csv /home/shared/pangoLEARN/pangoLEARN/data/lineages.metadata.csv
+cp /raid/shared/pangolearn_training/$OUTDIR/lineage.hash.csv /home/shared/pangoLEARN/pangoLEARN/data/lineages.hash.csv
 
 git add /home/shared/pangoLEARN/pangoLEARN/__init__.py
 git add /home/shared/pangoLEARN/pangoLEARN/data/decision*
