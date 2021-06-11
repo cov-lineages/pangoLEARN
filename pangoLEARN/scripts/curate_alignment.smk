@@ -282,5 +282,5 @@ rule create_hash:
                     fw.write(f">{seq_hash_dict[seq]}\n{seq}\n")
                     fw2.write(f"{seq_hash_dict[seq]},{designated[seq_hash_dict[seq]]}\n")
 
-        print(green("Number of seqs going into training: "),f"{num_seqs}")
+        print("Number of seqs going into training: ",f"{num_seqs}")
     
