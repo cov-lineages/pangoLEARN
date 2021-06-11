@@ -185,7 +185,7 @@ rule downsample:
             input.fasta, 
             output.fasta, 
             1, config["outgroups"], 
-            False 
+            False, 
             False, 
             10)
 
