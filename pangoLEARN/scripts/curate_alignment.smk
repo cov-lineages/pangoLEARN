@@ -267,7 +267,7 @@ rule create_hash:
         hash_map,seq_hash_dict = add_to_hash(input.fasta)
 
         with open(output.csv,"w") as fw:
-            fw.write("seq_hash,set_name\n")
+            fw.write("seq_hash,lineage\n")
             for seq_hash in hash_map:
                 seq_name = hash_map[seq_hash]
                 set_name = designated[seq_name]
