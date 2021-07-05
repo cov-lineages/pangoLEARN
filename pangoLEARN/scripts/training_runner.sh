@@ -5,7 +5,8 @@ conda activate pangolin
 
 
 TODAY=$(date +%F)
-OUTDIR=$TODAY_pangoLEARN
+OUTDIR=${TODAY}_pangoLEARN
+echo $OUTDIR
 REF="/localdisk/home/s1680070/repositories/pangolin/pangolin/data/reference.fasta"
 
 mkdir /localdisk/home/shared/raccoon-dog/$OUTDIR
