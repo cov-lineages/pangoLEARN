@@ -1,32 +1,36 @@
 #!/bin/bash
-source /home/s1680070/.bashrc_conda
-conda activate grinch
+source /localdisk/home/s1680070/.bashrc
+conda activate pangolin
+
+
 
 TODAY=$(date +%F)
-OUTDIR=data_release_$TODAY
+OUTDIR=$TODAY_pangoLEARN
+REF="/localdisk/home/s1680070/repositories/pangolin/pangolin/data/reference.fasta"
 
-mkdir /raid/shared/pangolearn_training/$OUTDIR
+mkdir /localdisk/home/shared/raccoon-dog/$OUTDIR
 
 echo "Training model version: $TODAY"
 
-LATEST_DATA=$(ls -td /raid/shared/2021* | head -n 1)
+LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid | head -n 1)
 
-cd /raid/shared/pango-designation && git pull #gets any updates to the reports in the data directory
+cd /localdisk/home/s1680070/repositories/pango-designation && git pull #gets any updates to the reports in the data directory
 PANGO_V=$(git tag --sort=committerdate | tail -1)
+LINEAGES_CSV="/localdisk/home/s1680070/repositories/pango-designation/lineages.csv"
 
 echo "pango version $PANGO_V"
 
-cd /raid/shared/pangolearn_training #gets any updates to the reports in the data directory
+cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 
-snakemake --snakefile /home/shared/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --configfile config.yaml --cores 1 --config outdir=$OUTDIR datadir=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
+snakemake --snakefile   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF =outdir=$OUTDIR datadir=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
 
-cp /raid/shared/pangolearn_training/$OUTDIR/pangolearn.init.py /home/shared/pangoLEARN/pangoLEARN/__init__.py
-cp /raid/shared/pangolearn_training/$OUTDIR/decision* /home/shared/pangoLEARN/pangoLEARN/data/
-cp /raid/shared/pangolearn_training/$OUTDIR/metadata.downsample.csv /home/shared/pangoLEARN/pangoLEARN/data/lineages.downsample.csv
-cp /raid/shared/pangolearn_training/$OUTDIR/lineage.hash.csv /home/shared/pangoLEARN/pangoLEARN/data/lineages.hash.csv
+cp /localdisk/home/shared/raccoon-dog/$OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
+cp /localdisk/home/shared/raccoon-dog/$OUTDIR/decision*   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/
+cp /localdisk/home/shared/raccoon-dog/$OUTDIR/metadata.downsample.csv   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/lineages.downsample.csv
+cp /localdisk/home/shared/raccoon-dog/$OUTDIR/lineage.hash.csv   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/lineages.hash.csv
 
-git add /home/shared/pangoLEARN/pangoLEARN/__init__.py
-git add /home/shared/pangoLEARN/pangoLEARN/data/decision*
-git add /home/shared/pangoLEARN/pangoLEARN/data/lineages*
+git add   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
+git add   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/decision*
+git add   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/lineages*
 
 
