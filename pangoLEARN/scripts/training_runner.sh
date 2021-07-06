@@ -13,17 +13,17 @@ mkdir /localdisk/home/shared/raccoon-dog/$OUTDIR
 
 echo "Training model version: $TODAY"
 
-LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid | head -n 1)
+# LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
+LATEST_DATA=$1
 
 cd /localdisk/home/s1680070/repositories/pango-designation && git pull #gets any updates to the reports in the data directory
-PANGO_V=$(git tag --sort=committerdate | tail -1)
+PANGO_V=$(git tag | tail -1)
 LINEAGES_CSV="/localdisk/home/s1680070/repositories/pango-designation/lineages.csv"
-
 echo "pango version $PANGO_V"
-
+echo "lineages csv $LINEAGES_CSV"
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 
-snakemake --snakefile   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF =outdir=$OUTDIR datadir=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
+snakemake --snakefile /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF =outdir=$OUTDIR data_date=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
 
 cp /localdisk/home/shared/raccoon-dog/$OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
 cp /localdisk/home/shared/raccoon-dog/$OUTDIR/decision*   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/

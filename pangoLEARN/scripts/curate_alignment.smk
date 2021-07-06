@@ -35,8 +35,9 @@ def add_to_hash(seq_file):
 
 config["trim_start"] = 265
 config["trim_end"] = 29674
-config["outgroups"] = "/raid/shared/grinch/grinch/data/outgroups.csv"
-config["genbank_ref"] = "/raid/shared/grinch/grinch/data/WH04.gb"
+config["outgroups"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/outgroups.csv"
+config["genbank_ref"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/WH04.gb"
+config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
 
 rule all:
     input:
@@ -57,12 +58,11 @@ __version__ = "{pangolearn_new_v}"
 PANGO_VERSION = "{pango_version}"
 ''')
 
-
 rule filter_alignment:
     input:
         csv = config["lineages_csv"],
-        fasta = os.path.join(config["datadir"],"0","gisaid.UH.RD.aligned.fasta"),
-        full_csv = os.path.join(config["datadir"],"2","lineages.metadata.csv")
+        fasta = os.path.join(config["datadir"],f"gisaid_{data_date}_all_alignment.fa"),
+        full_csv = os.path.join(config["datadir"],f"gisaid_{data_date}_all_metadata.csv")
     output:
         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
         csv = os.path.join(config["outdir"],"lineages.metadata.filtered.csv"),
