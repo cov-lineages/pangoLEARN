@@ -23,7 +23,7 @@ echo "pango version $PANGO_V"
 echo "lineages csv $LINEAGES_CSV"
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 
-snakemake --snakefile /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF =outdir=$OUTDIR data_date=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
+snakemake --snakefile /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF outdir=$OUTDIR data_date=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
 
 cp /localdisk/home/shared/raccoon-dog/$OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
 cp /localdisk/home/shared/raccoon-dog/$OUTDIR/decision*   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/
