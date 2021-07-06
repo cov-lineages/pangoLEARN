@@ -5,11 +5,19 @@ conda activate pangolin
 
 
 TODAY=$(date +%F)
-OUTDIR=${TODAY}_pangoLEARN
+OUT=${TODAY}_pangoLEARN
+OUTDIR=/localdisk/home/shared/raccoon-dog/$OUT
+
 echo $OUTDIR
 REF="/localdisk/home/s1680070/repositories/pangolin/pangolin/data/reference.fasta"
 
-mkdir /localdisk/home/shared/raccoon-dog/$OUTDIR
+if [ -d $OUTDIR ] 
+then
+    echo "Directory $OUTDIR exists." 
+else
+    mkdir $OUTDIR 
+    echo "Error: Directory $OUTDIR does not exist, making it."
+fi
 
 echo "Training model version: $TODAY"
 
@@ -21,8 +29,9 @@ PANGO_V=$(git tag | tail -1)
 LINEAGES_CSV="/localdisk/home/s1680070/repositories/pango-designation/lineages.csv"
 echo "pango version $PANGO_V"
 echo "lineages csv $LINEAGES_CSV"
+echo "reference $REF"
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
-
+echo "--config lineages_csv=$LINEAGES_CSV reference=$REF outdir=$OUTDIR data_date=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V"
 snakemake --snakefile /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/scripts/curate_alignment.smk --nolock --cores 1 --config lineages_csv=$LINEAGES_CSV reference=$REF outdir=$OUTDIR data_date=$LATEST_DATA pangolearn_version=$TODAY pango_version=$PANGO_V
 
 cp /localdisk/home/shared/raccoon-dog/$OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
