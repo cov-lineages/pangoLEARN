@@ -221,7 +221,7 @@ rule run_training:
         txt = os.path.join(config["outdir"],"training_summary.txt")
     shell:
         """
-        python /home/shared/pangoLEARN/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
+        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \
@@ -236,7 +236,7 @@ rule get_recall:
         txt = os.path.join(config["outdir"],"lineage_recall_report.txt")
     shell:
         """
-        python /home/shared/pangoLEARN/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
+        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
         """
 
 rule get_decisions:
@@ -248,7 +248,7 @@ rule get_decisions:
         txt = os.path.join(config["outdir"],"decision_tree_rules.txt")
     shell:
         """
-        python /home/shared/pangoLEARN/pangoLEARN/training/getDecisionTreeRules.py \
+        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/getDecisionTreeRules.py \
         {input.model:q} {input.headers:q} {input.txt:q} \
         > {output.txt:q}
         """

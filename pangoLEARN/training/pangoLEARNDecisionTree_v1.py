@@ -34,8 +34,8 @@ referenceSeq = ""
 idToLineage = dict()
 idToSeq = dict()
 
-mustKeepIds = ["Wuhan/WH04/2020", "Wuhan/WHU01/2020", "Italy/ABR-IZSGC-TE5166/2020", "Germany/BY-MVP-V2010837/2020", "Spain/VC-IBV-98006461/2020"]
-mustKeepLineages = ["A", "B", "B.1", "B.1.1", "B.1.177"]
+mustKeepIds = []
+mustKeepLineages = []
 
 
 # function for handling weird sequence characters
