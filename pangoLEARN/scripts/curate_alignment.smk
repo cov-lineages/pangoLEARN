@@ -7,6 +7,8 @@ import collections
 import csv
 from Bio import SeqIO
 from pangoLEARN.training import downsample
+from datetime import date
+today = date.today()
 
 def get_hash_string(record):
     seq = str(record.seq).upper().encode()
@@ -32,9 +34,11 @@ def add_to_hash(seq_file):
         seq_hash[str(record.seq)] = record.id
     return hash_map,seq_hash
 
-
+data_date = config["data_date"]
 config["trim_start"] = 265
 config["trim_end"] = 29674
+config["lineages_csv"]="/localdisk/home/s1680070/repositories/pango-designation/lineages.csv"
+config["reference"] = "/localdisk/home/s1680070/repositories/pangolin/pangolin/data/reference.fasta"
 config["outgroups"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/outgroups.csv"
 config["genbank_ref"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/WH04.gb"
 config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
