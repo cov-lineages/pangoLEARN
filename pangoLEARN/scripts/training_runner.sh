@@ -28,7 +28,7 @@ fi
 # LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
 
 cd /localdisk/home/s1680070/repositories/pango-designation && git pull #gets any updates to the reports in the data directory
-PANGO_V=$(git tag | tail -1)
+PANGO_V=$(git tag --points-at HEAD)
 echo "pango version $PANGO_V"
 
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
