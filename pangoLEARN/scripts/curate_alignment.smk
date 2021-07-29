@@ -249,12 +249,13 @@ rule get_decisions:
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
         txt = rules.run_training.output.txt
     output:
-        txt = os.path.join(config["outdir"],"decision_tree_rules.txt")
+        txt = os.path.join(config["outdir"],"tree_rules.txt"),
+        zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
     shell:
         """
         python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/getDecisionTreeRules.py \
         {input.model:q} {input.headers:q} {input.txt:q} \
-        > {output.txt:q}
+        > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
         """
 
 rule create_hash:
