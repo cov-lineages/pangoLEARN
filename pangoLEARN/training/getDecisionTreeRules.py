@@ -4,7 +4,7 @@ import joblib
 import sys
 from sklearn.tree import _tree
 
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(4000)
 
 loaded_model = joblib.load(sys.argv[1])
 headers = joblib.load(sys.argv[2])
