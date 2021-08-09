@@ -46,7 +46,7 @@ config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publi
 rule all:
     input:
         os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        os.path.join(config["outdir"],"decision_tree_rules.txt"),
+        os.path.join(config["outdir"],"decision_tree_rules.zip"),
         os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"lineage.hash.csv")
 
