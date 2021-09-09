@@ -214,11 +214,29 @@ rule filter_metadata:
                         lineage = row["lineage"]
                         fw.write(f"{name},{lineage}\n")
 
+
+rule get_relevant_postions:
+    input:
+        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
+        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        reference = config["reference"]
+    output:
+        relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
+    shell:
+        """
+        python /localdisk/home/s1680070/repositories/quokka/quokka/getRelevantLocationsObject.py \
+        {input.reference:q} \
+        {input.fasta} \
+        {input.csv:q} \
+        {config[outdir]}
+        """
+
 rule run_training:
     input:
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"]
+        relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
@@ -230,6 +248,7 @@ rule run_training:
         {input.fasta} \
         {input.reference:q} \
         {config[outdir]} \
+        {input.relevant_pos_obj} \
         > {output.txt:q}
         """
 
