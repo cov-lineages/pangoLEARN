@@ -235,7 +235,7 @@ rule run_training:
     input:
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
-        reference = config["reference"]
+        reference = config["reference"],
         relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
