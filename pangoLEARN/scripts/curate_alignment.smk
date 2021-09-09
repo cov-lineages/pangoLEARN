@@ -34,13 +34,17 @@ def add_to_hash(seq_file):
         seq_hash[str(record.seq)] = record.id
     return hash_map,seq_hash
 
+pangoLEARN_path = config["pangoLEARN_path"].rstrip("/")
+pangolin_path = config["pangolin_path"].rstrip("/")
+pango_designation_path = config["pango_designation_path"].rstrip("/")
+
 data_date = config["data_date"]
 config["trim_start"] = 265
 config["trim_end"] = 29674
-config["lineages_csv"]="/localdisk/home/s1680070/repositories/pango-designation/lineages.csv"
-config["reference"] = "/localdisk/home/s1680070/repositories/pangolin/pangolin/data/reference.fasta"
-config["outgroups"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/outgroups.csv"
-config["genbank_ref"] = "/localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/WH04.gb"
+config["lineages_csv"]=f"{pango_designation_path}/lineages.csv"
+config["reference"] = f"{pangolin_path}/pangolin/data/reference.fasta"
+config["outgroups"] = f"{pangoLEARN_path}/pangoLEARN/training/outgroups.csv"
+config["genbank_ref"] = f"{pangoLEARN_path}/pangoLEARN/training/WH04.gb"
 config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
 
 rule all:
@@ -219,13 +223,15 @@ rule run_training:
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"]
+    params:
+        path_to_script = pangoLEARN_path
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
         txt = os.path.join(config["outdir"],"training_summary.txt")
     shell:
         """
-        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
+        python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \
@@ -236,11 +242,13 @@ rule run_training:
 rule get_recall:
     input:
         txt = rules.run_training.output.txt
+    params:
+        path_to_script = pangoLEARN_path
     output:
         txt = os.path.join(config["outdir"],"lineage_recall_report.txt")
     shell:
         """
-        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
+        python {params.path_to_script}/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
         """
 
 rule get_decisions:
@@ -248,12 +256,14 @@ rule get_decisions:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
         txt = rules.run_training.output.txt
+    params:
+        path_to_script = pangoLEARN_path
     output:
         txt = os.path.join(config["outdir"],"tree_rules.txt"),
         zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
     shell:
         """
-        python /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/training/getDecisionTreeRules.py \
+        python {params.path_to_script}/pangoLEARN/training/getDecisionTreeRules.py \
         {input.model:q} {input.headers:q} {input.txt:q} \
         > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
         """
