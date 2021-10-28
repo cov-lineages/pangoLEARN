@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# source /localdisk/home/s1680070/.bashrc
-# conda activate pangolin
+#source /localdisk/home/s1680070/.bashrc
+#conda activate pangolin
 
 TODAY=$(date +%F)
 OUT=${TODAY}_pangoLEARN
@@ -28,11 +28,12 @@ fi
 
 # LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
 
-REPO_PATH=/localdisk/home/s1680070/repositories
+REPO_PATH=/localdisk/home/s1362711/repositories
 
 PANGO_PATH=$REPO_PATH/pango-designation
 PLEARN_PATH=$REPO_PATH/pangoLEARN
 PANGOLIN_PATH=$REPO_PATH/pangolin
+QUOKKA_PATH=$REPO_PATH/quokka
 
 echo "pango designation path $PANGO_PATH"
 echo "pangoLEARN path $PLEARN_PATH"
@@ -46,7 +47,7 @@ echo "pango version $PANGO_V"
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 echo "--config outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY pango_version=$PANGO_V"
 echo "pangoLEARN training starting" | mail -s "update lineageTree.pb with pango designation version $PANGO_V" angie@soe.ucsc.edu
-snakemake --snakefile $PLEARN_PATH/pangoLEARN/scripts/curate_alignment.smk --rerun-incomplete --nolock --cores 1 --config pango_designation_path=$PANGO_PATH pangolin_path=$PANGOLIN_PATH pangoLEARN_path=$PLEARN_PATH outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY pango_version=$PANGO_V
+snakemake --snakefile $PLEARN_PATH/pangoLEARN/scripts/curate_alignment.smk --rerun-incomplete --nolock --cores 1 --config pango_designation_path=$PANGO_PATH pangolin_path=$PANGOLIN_PATH pangoLEARN_path=$PLEARN_PATH quokka_path=$QUOKKA_PATH outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY pango_version=$PANGO_V
 
 # cp $OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
 # cp $OUTDIR/decision*   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/

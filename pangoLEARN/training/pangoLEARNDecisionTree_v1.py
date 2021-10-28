@@ -44,91 +44,91 @@ mustKeepLineages = []
 
 # function for handling weird sequence characters
 def clean(x, loc):
-    x = x.upper()
-    
-    if x == 'T' or x == 'A' or x == 'G' or x == 'C' or x == '-':
-        return x
+	x = x.upper()
+	
+	if x == 'T' or x == 'A' or x == 'G' or x == 'C' or x == '-':
+		return x
 
-    if x == 'U':
-        return 'T'
+	if x == 'U':
+		return 'T'
 
-    # otherwise return value from reference
-    return referenceSeq[loc]
+	# otherwise return value from reference
+	return referenceSeq[loc]
 
 def findReferenceSeq():
-    with open(referenceFile) as f:
-        currentSeq = ""
+	with open(referenceFile) as f:
+		currentSeq = ""
 
-        for line in f:
-            if ">" not in line:
-                currentSeq = currentSeq + line.strip()
+		for line in f:
+			if ">" not in line:
+				currentSeq = currentSeq + line.strip()
 
-    f.close()
-    return currentSeq
+	f.close()
+	return currentSeq
 
 
 def getDataLine(seqId, seq):
-    dataLine = []
-    dataLine.append(seqId)
+	dataLine = []
+	dataLine.append(seqId)
 
-    newSeq = ""
+	newSeq = ""
 
-    # for each character in the sequence
-    for index in range(len(seq)):
-        newSeq = newSeq + clean(seq[index], index)
+	# for each character in the sequence
+	for index in range(len(seq)):
+		newSeq = newSeq + clean(seq[index], index)
 
-    dataLine.append(newSeq)
-    
-    return dataLine
+	dataLine.append(newSeq)
+	
+	return dataLine
 
 
 def readInAndFormatData():
 
-    # add the data line for the reference seq
-    idToLineage[referenceId] = "A"
-    dataList.append(getDataLine(referenceId, referenceSeq))
+	# add the data line for the reference seq
+	idToLineage[referenceId] = "A"
+	dataList.append(getDataLine(referenceId, referenceSeq))
 
-    # create a dictionary of sequence ids to their assigned lineages
-    with open(lineage_file, 'r') as f:
-        for line in f:
-            line = line.strip()
+	# create a dictionary of sequence ids to their assigned lineages
+	with open(lineage_file, 'r') as f:
+		for line in f:
+			line = line.strip()
 
-            split = line.split(",")
+			split = line.split(",")
 
-            idToLineage[split[0]] = split[1]
+			idToLineage[split[0]] = split[1]
 
-    # close the file
-    f.close()
+	# close the file
+	f.close()
 
-    seq_dict = {rec.id : rec.seq for rec in SeqIO.parse(sequence_file, "fasta")}
+	seq_dict = {rec.id : rec.seq for rec in SeqIO.parse(sequence_file, "fasta")}
 
-    print("files read in, now processing")
+	print("files read in, now processing")
 
-    for key in seq_dict.keys():
-        if key in idToLineage:
-            dataList.append(getDataLine(key, seq_dict[key]))
-        else:
-            print("unable to find the lineage classification for: " + key)
+	for key in seq_dict.keys():
+		if key in idToLineage:
+			dataList.append(getDataLine(key, seq_dict[key]))
+		else:
+			print("unable to find the lineage classification for: " + key)
 
 
 # find columns in the data list which always have the same value
 def findColumnsWithoutSNPs():
 
-    # for each index in the length of each sequence
-    for index in range(len(dataList[0][1])):
-        keep = False
+	# for each index in the length of each sequence
+	for index in range(len(dataList[0][1])):
+		keep = False
 
-        # loop through all lines
-        for line in dataList:
+		# loop through all lines
+		for line in dataList:
 
-            # if there is a difference somewhere, then we want to keep it
-            if dataList[0][1][index] != line[1][index] or index == 0:
-                keep = True
-                break
+			# if there is a difference somewhere, then we want to keep it
+			if dataList[0][1][index] != line[1][index] or index == 0:
+				keep = True
+				break
 
-        # otherwise, save it
-        if keep and index in relevant_positions:
-            indiciesToKeep[index] = True
+		# otherwise, save it
+		if keep and index in relevant_positions:
+			indiciesToKeep[index] = True
 
 
 # remove columns from the data list which don't have any SNPs. We do this because
@@ -136,115 +136,115 @@ def findColumnsWithoutSNPs():
 # differences between sequences to assign lineages
 def removeOtherIndices(indiciesToKeep):
 
-    # instantiate the final list
-    finalList = []
+	# instantiate the final list
+	finalList = []
 
-    indicies = list(indiciesToKeep.keys())
-    indicies.sort()
+	indicies = list(indiciesToKeep.keys())
+	indicies.sort()
 
-    # while the dataList isn't empty
-    while len(dataList) > 0:
+	# while the dataList isn't empty
+	while len(dataList) > 0:
 
-        # pop the first line
-        line = dataList.pop(0)
-        seqId = line.pop(0)
+		# pop the first line
+		line = dataList.pop(0)
+		seqId = line.pop(0)
 
-        line = line[0]
-        # initialize the finalLine
-        finalLine = []
+		line = line[0]
+		# initialize the finalLine
+		finalLine = []
 
-        for index in indicies:
-            if index == 0:
-                # if its the first index, then that's the lineage assignment, so keep it
-                finalLine.append(seqId)
-            else:
-                # otherwise keep everything at the indices in indiciesToKeep
-                finalLine.append(line[index])
+		for index in indicies:
+			if index == 0:
+				# if its the first index, then that's the lineage assignment, so keep it
+				finalLine.append(seqId)
+			else:
+				# otherwise keep everything at the indices in indiciesToKeep
+				finalLine.append(line[index])
 
-        # save the finalLine to the finalList
-        finalList.append(finalLine)
+		# save the finalLine to the finalList
+		finalList.append(finalLine)
 
-    # return
-    return finalList
+	# return
+	return finalList
 
 def allEqual(list):
-        entries = dict()
+		entries = dict()
 
-        for i in list:
-            if i not in entries:
-                entries[i] = True
+		for i in list:
+			if i not in entries:
+				entries[i] = True
 
-        return len(entries) == 1
+		return len(entries) == 1
 
 def removeAmbiguous():
-    idsToRemove = set()
-    lineMap = dict()
-    idMap = dict()
+	idsToRemove = set()
+	lineMap = dict()
+	idMap = dict()
 
-    for line in dataList:
-        keyString = ",".join(line[1:])
+	for line in dataList:
+		keyString = ",".join(line[1:])
 
-        if keyString not in lineMap:
-            lineMap[keyString] = []
-            idMap[keyString] = []
+		if keyString not in lineMap:
+			lineMap[keyString] = []
+			idMap[keyString] = []
  
-        if line[0] in idToLineage:
-            lineMap[keyString].append(idToLineage[line[0]])
-            idMap[keyString].append(line[0])
-        else:
-            print("diagnostics")
-            print(line[0])
-            print(keyString)
-            print(line)
-    for key in lineMap:
-        if not allEqual(lineMap[key]):
+		if line[0] in idToLineage:
+			lineMap[keyString].append(idToLineage[line[0]])
+			idMap[keyString].append(line[0])
+		else:
+			print("diagnostics")
+			print(line[0])
+			print(keyString)
+			print(line)
+	for key in lineMap:
+		if not allEqual(lineMap[key]):
 
-            skipRest = False
+			skipRest = False
 
-            # see if any protected lineages are contained in the set, if so keep those ids
-            for lineage in lineMap[key]:
-                if lineage in mustKeepLineages:
-                    skipRest = True
+			# see if any protected lineages are contained in the set, if so keep those ids
+			for lineage in lineMap[key]:
+				if lineage in mustKeepLineages:
+					skipRest = True
 
-                    for i in idMap[key]:
-                        if lineage != idToLineage[i] and i not in mustKeepIds:
-                            idsToRemove.add(i)
+					for i in idMap[key]:
+						if lineage != idToLineage[i] and i not in mustKeepIds:
+							idsToRemove.add(i)
 
-            # none of the lineages are protected, fire at will
-            if not skipRest:
+			# none of the lineages are protected, fire at will
+			if not skipRest:
 
-                lineageToCounts = dict()
+				lineageToCounts = dict()
 
-                aLineage = False
-                # find most common lineage
-                for lineage in lineMap[key]:
-                    if lineage not in lineageToCounts:
-                        lineageToCounts[lineage] = 0
+				aLineage = False
+				# find most common lineage
+				for lineage in lineMap[key]:
+					if lineage not in lineageToCounts:
+						lineageToCounts[lineage] = 0
 
-                    lineageToCounts[lineage] = lineageToCounts[lineage] + 1
-                    aLineage = lineage
+					lineageToCounts[lineage] = lineageToCounts[lineage] + 1
+					aLineage = lineage
 
-                m = aLineage
-                for lineage in lineageToCounts:
-                    if lineageToCounts[lineage] > lineageToCounts[m]:
-                        m = lineage
+				m = aLineage
+				for lineage in lineageToCounts:
+					if lineageToCounts[lineage] > lineageToCounts[m]:
+						m = lineage
 
 
-                for i in idMap[key]:
-                    if m != idToLineage[i]:
-                        idsToRemove.add(i)
+				for i in idMap[key]:
+					if m != idToLineage[i]:
+						idsToRemove.add(i)
 
-    newList = []
+	newList = []
 
-    print("keeping indicies:")
+	print("keeping indicies:")
 
-    for line in dataList:
-        if line[0] not in idsToRemove:
-            print(line[0])
-            line[0] = idToLineage[line[0]]
-            newList.append(line)
+	for line in dataList:
+		if line[0] not in idsToRemove:
+			print(line[0])
+			line[0] = idToLineage[line[0]]
+			newList.append(line)
 
-    return newList
+	return newList
 
 
 print("reading in data " + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
@@ -284,8 +284,8 @@ dummyHeaders = headers[1:]
 # add extra rows to ensure all of the categories are represented, as otherwise 
 # not enough columns will be created when we call get_dummies
 for i in categories:
-    line = [i] * len(dataList[0])
-    pima.loc[len(pima)] = line
+	line = [i] * len(dataList[0])
+	pima.loc[len(pima)] = line
 
 # get one-hot encoding
 pima = pd.get_dummies(pima, columns=dummyHeaders)
@@ -347,10 +347,10 @@ print("model files created", flush=True)
 # this method is used below when running 10-fold cross validation. It ensures
 # that the per-lineage statistics are generated for each cross-fold
 def classification_report_with_accuracy_score(y_true, y_pred):
-    print("--------------------------------------------")
-    print("Crossfold Classification Report")
-    print(metrics.classification_report(y_true, y_pred, digits=3))
-    return accuracy_score(y_true, y_pred)
+	print("--------------------------------------------")
+	print("Crossfold Classification Report")
+	print(metrics.classification_report(y_true, y_pred, digits=3))
+	return accuracy_score(y_true, y_pred)
 
 # optionally, run 10-fold cross validation (comment this out if not needed as it takes a while to run)
-cross_validation_scores = cross_val_score(dt, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))
+# cross_validation_scores = cross_val_score(dt, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))

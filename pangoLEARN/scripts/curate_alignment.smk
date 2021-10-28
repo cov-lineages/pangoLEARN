@@ -37,6 +37,7 @@ def add_to_hash(seq_file):
 pangoLEARN_path = config["pangoLEARN_path"].rstrip("/")
 pangolin_path = config["pangolin_path"].rstrip("/")
 pango_designation_path = config["pango_designation_path"].rstrip("/")
+quokka_path = config["quokka_path"].rstrip("/")
 
 data_date = config["data_date"]
 config["trim_start"] = 265
@@ -225,12 +226,12 @@ rule get_relevant_postions:
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"]
     params:
-        path_to_script = pangoLEARN_path
+        path_to_script = quokka_path
     output:
         relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
     shell:
         """
-        python /localdisk/home/s1680070/repositories/quokka/quokka/getRelevantLocationsObject.py \
+        python {params.path_to_script}/quokka/getRelevantLocationsObject.py \
         {input.reference:q} \
         {input.fasta} \
         {input.csv:q} \
@@ -243,6 +244,8 @@ rule run_training:
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"],
         relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
+    params:
+        path_to_script = pangoLEARN_path
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
@@ -317,4 +320,3 @@ rule create_hash:
                     fw2.write(f"{seq_hash_dict[seq]},{designated[seq_hash_dict[seq]]}\n")
 
         print("Number of seqs going into training: ",f"{num_seqs}")
-    
