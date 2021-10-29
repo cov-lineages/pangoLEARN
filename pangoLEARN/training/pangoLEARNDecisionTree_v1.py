@@ -11,13 +11,17 @@ import sys
 import os
 from sklearn.model_selection import cross_val_score
 from Bio import SeqIO
+import pickle
 
 # file with lineage assignments
 lineage_file = sys.argv[1]
 # file with sequences
 sequence_file = sys.argv[2]
 # how much of the data will be used for testing, instead of training
-testing_percentage = 0.00000001
+testing_percentage = 0.0000000001
+
+relevant_positions = pickle.load(open(sys.argv[5], 'rb'))
+relevant_positions.add(0)
 
 # the path to the reference file. 
 # This reference sequence must be the same as is used in the pangolearn script!!
@@ -123,7 +127,7 @@ def findColumnsWithoutSNPs():
 				break
 
 		# otherwise, save it
-		if keep:
+		if keep and index in relevant_positions:
 			indiciesToKeep[index] = True
 
 
@@ -183,10 +187,15 @@ def removeAmbiguous():
 		if keyString not in lineMap:
 			lineMap[keyString] = []
 			idMap[keyString] = []
-
-		lineMap[keyString].append(idToLineage[line[0]])
-		idMap[keyString].append(line[0])
-
+ 
+		if line[0] in idToLineage:
+			lineMap[keyString].append(idToLineage[line[0]])
+			idMap[keyString].append(line[0])
+		else:
+			print("diagnostics")
+			print(line[0])
+			print(keyString)
+			print(line)
 	for key in lineMap:
 		if not allEqual(lineMap[key]):
 

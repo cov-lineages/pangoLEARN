@@ -37,6 +37,7 @@ def add_to_hash(seq_file):
 pangoLEARN_path = config["pangoLEARN_path"].rstrip("/")
 pangolin_path = config["pangolin_path"].rstrip("/")
 pango_designation_path = config["pango_designation_path"].rstrip("/")
+quokka_path = config["quokka_path"].rstrip("/")
 
 data_date = config["data_date"]
 config["trim_start"] = 265
@@ -218,11 +219,31 @@ rule filter_metadata:
                         lineage = row["lineage"]
                         fw.write(f"{name},{lineage}\n")
 
-rule run_training:
+
+rule get_relevant_postions:
     input:
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"]
+    params:
+        path_to_script = quokka_path
+    output:
+        relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
+    shell:
+        """
+        python {params.path_to_script}/quokka/getRelevantLocationsObject.py \
+        {input.reference:q} \
+        {input.fasta} \
+        {input.csv:q} \
+        {config[outdir]}
+        """
+
+rule run_training:
+    input:
+        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
+        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        reference = config["reference"],
+        relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
     params:
         path_to_script = pangoLEARN_path
     output:
@@ -236,6 +257,7 @@ rule run_training:
         {input.fasta} \
         {input.reference:q} \
         {config[outdir]} \
+        {input.relevant_pos_obj} \
         > {output.txt:q}
         """
 
@@ -298,4 +320,3 @@ rule create_hash:
                     fw2.write(f"{seq_hash_dict[seq]},{designated[seq_hash_dict[seq]]}\n")
 
         print("Number of seqs going into training: ",f"{num_seqs}")
-    
