@@ -21,14 +21,22 @@ echo "Training model version: $TODAY"
 
 if [ -z "$1" ]
 then
+    UID="s1680070"
+else
+    UID=$1
+fi
+
+if [ -z "$2" ]
+then
     DATA_DATE=$TODAY
 else
-    DATA_DATE=$1
+    DATA_DATE=$2
 fi
+
 
 # LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
 
-REPO_PATH=/localdisk/home/s1362711/repositories
+REPO_PATH=/localdisk/home/$UID/repositories
 
 PANGO_PATH=$REPO_PATH/pango-designation
 PLEARN_PATH=$REPO_PATH/pangoLEARN
