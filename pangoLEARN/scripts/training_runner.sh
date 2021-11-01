@@ -32,7 +32,7 @@ then
 else
     DATA_DATE=$2
 fi
-
+echo "$UID training version $DATA_DATE"
 
 # LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
 
