@@ -1,3 +1,4 @@
+
 import csv
 from Bio import SeqIO
 import os
@@ -8,46 +9,17 @@ import csv
 from Bio import SeqIO
 from pangoLEARN.training import downsample
 from pangoLEARN.training.get_lineage_positions import get_relevant_positions
+
+import pangoLEARN.utils.config as cfg
+import pangoLEARN.utils.hashing
+import pangoLEARN.utils.misc
+
 from datetime import date
 today = date.today()
 
-def get_hash_string(record):
-    seq = str(record.seq).upper().encode()
-    hash_object = hashlib.md5(seq)
-    hash_string = hash_object.hexdigest()
-    return hash_string
+cfg.min_config(config)
 
-def get_dict(in_csv,name_column,data_column):
-    this_dict = {}
-    with open(in_csv,"r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            this_dict[row[name_column]] = row[data_column]
-    return this_dict
-
-def add_to_hash(seq_file):
-    hash_map = {}
-    seq_hash = {}
-    for record in SeqIO.parse(seq_file, "fasta"):
-        seq = str(record.seq).upper().encode()
-        hash_object = hashlib.md5(seq)
-        hash_map[hash_object.hexdigest()] = record.id
-        seq_hash[str(record.seq)] = record.id
-    return hash_map,seq_hash
-
-pangoLEARN_path = config["pangoLEARN_path"].rstrip("/")
-pangolin_path = config["pangolin_path"].rstrip("/")
-pango_designation_path = config["pango_designation_path"].rstrip("/")
-quokka_path = config["quokka_path"].rstrip("/")
-
-data_date = config["data_date"]
-config["trim_start"] = 265
-config["trim_end"] = 29674
-config["lineages_csv"]=f"{pango_designation_path}/lineages.csv"
-config["reference"] = f"{pangolin_path}/pangolin/data/reference.fasta"
-config["outgroups"] = f"{pangoLEARN_path}/pangoLEARN/training/outgroups.csv"
-config["genbank_ref"] = f"{pangoLEARN_path}/pangoLEARN/training/WH04.gb"
-config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
+cfg.setup_paths(config)
 
 rule all:
     input:
@@ -66,6 +38,13 @@ rule make_init:
             fw.write(f'''_program = "pangoLEARN"
 __version__ = "{pangolearn_new_v}"
 PANGO_VERSION = "{pango_version}"
+
+__all__ = [
+    "training",
+    "utils"]
+
+from pangoLEARN import *
+
 ''')
 
 rule filter_alignment:
@@ -226,8 +205,6 @@ rule get_relevant_postions:
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
         csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
         reference = config["reference"]
-    params:
-        path_to_script = quokka_path
     output:
         relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
     run:
