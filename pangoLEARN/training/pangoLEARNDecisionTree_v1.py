@@ -37,6 +37,7 @@ dataList = []
 indiciesToKeep = dict()
 
 referenceId = "Wuhan/WH04/2020"
+referenceLineage = sys.argv[6]
 referenceSeq = ""
 
 idToLineage = dict()
@@ -50,14 +51,15 @@ mustKeepLineages = []
 def clean(x, loc):
 	x = x.upper()
 	
-	if x == 'T' or x == 'A' or x == 'G' or x == 'C' or x == '-':
+	if x in ['T','A','G','C','-']:
 		return x
 
-	if x == 'U':
+	elif x == 'U':
 		return 'T'
 
 	# otherwise return value from reference
-	return referenceSeq[loc]
+	else:
+		return referenceSeq[loc]
 
 def findReferenceSeq():
 	with open(referenceFile) as f:
@@ -72,6 +74,7 @@ def findReferenceSeq():
 
 
 def getDataLine(seqId, seq):
+	# dataLine becomes a 2 element list with 0 = seqID and 1 = clean sequence
 	dataLine = []
 	dataLine.append(seqId)
 
@@ -89,7 +92,7 @@ def getDataLine(seqId, seq):
 def readInAndFormatData():
 
 	# add the data line for the reference seq
-	idToLineage[referenceId] = "A"
+	idToLineage[referenceId] = referenceLineage
 	dataList.append(getDataLine(referenceId, referenceSeq))
 
 	# create a dictionary of sequence ids to their assigned lineages

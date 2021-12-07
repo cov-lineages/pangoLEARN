@@ -253,6 +253,7 @@ rule run_training:
         {input.reference:q} \
         {config[outdir]} \
         {input.relevant_pos_obj} \
+        A \
         > {output.txt:q}
         """
 
