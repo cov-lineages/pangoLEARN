@@ -20,8 +20,12 @@ sequence_file = sys.argv[2]
 # how much of the data will be used for testing, instead of training
 testing_percentage = 0.0000000001
 
-relevant_positions = pickle.load(open(sys.argv[5], 'rb'))
-relevant_positions.add(0)
+try:
+	relevant_positions = pickle.load(open(sys.argv[5], 'rb'))
+	relevant_positions.add(0)
+except:
+	print("No relevant positions loadable.")
+	relevant_positions = []
 
 # the path to the reference file. 
 # This reference sequence must be the same as is used in the pangolearn script!!
@@ -127,8 +131,12 @@ def findColumnsWithoutSNPs():
 				break
 
 		# otherwise, save it
-		if keep and index in relevant_positions:
-			indiciesToKeep[index] = True
+		if keep:
+			if relevant_positions:
+				if index in relevant_positions:
+					indiciesToKeep[index] = True
+			else:
+				indiciesToKeep[index] = True
 
 
 # remove columns from the data list which don't have any SNPs. We do this because
