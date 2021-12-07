@@ -119,12 +119,13 @@ def readInAndFormatData():
 def findColumnsWithoutSNPs():
 
 	# for each index in the length of each sequence
+	print(range(len(dataList[0][1])))
 	for index in range(len(dataList[0][1])):
 		keep = False
-
+		print(index)
 		# loop through all lines
 		for line in dataList:
-
+			print(line[1])
 			# if there is a difference somewhere, then we want to keep it
 			if dataList[0][1][index] != line[1][index] or index == 0:
 				keep = True

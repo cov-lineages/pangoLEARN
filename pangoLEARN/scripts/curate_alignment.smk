@@ -7,6 +7,7 @@ import collections
 import csv
 from Bio import SeqIO
 from pangoLEARN.training import downsample
+from pangoLEARN.training.get_lineage_positions import get_relevant_positions
 from datetime import date
 today = date.today()
 
@@ -229,14 +230,8 @@ rule get_relevant_postions:
         path_to_script = quokka_path
     output:
         relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
-    shell:
-        """
-        python {params.path_to_script}/quokka/getRelevantLocationsObject.py \
-        {input.reference:q} \
-        {input.fasta} \
-        {input.csv:q} \
-        {config[outdir]}
-        """
+    run:
+        get_relevant_positions(input.csv,input.fasta,input.reference,output.relevant_pos_obj)
 
 rule run_training:
     input:
