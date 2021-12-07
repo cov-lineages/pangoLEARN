@@ -1,7 +1,7 @@
 !/bin/bash
 
-#source /localdisk/home/shared/.bashrc
-#conda activate pangolin
+source /localdisk/home/shared/.bashrc_conda
+conda activate pangolin
 
 TODAY=$(date +%F)
 OUT=${TODAY}_pangoLEARN
