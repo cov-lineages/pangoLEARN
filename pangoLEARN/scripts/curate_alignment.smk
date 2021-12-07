@@ -9,6 +9,7 @@ import csv
 from Bio import SeqIO
 from pangoLEARN.training import downsample
 from pangoLEARN.training.get_lineage_positions import get_relevant_positions
+from pangoLEARN.training import process_designations
 
 import pangoLEARN.utils.config as cfg
 import pangoLEARN.utils.hashing
@@ -32,20 +33,7 @@ rule make_init:
     output:
         init = os.path.join(config["outdir"],"pangolearn.init.py")
     run:
-        pangolearn_new_v = config["pangolearn_version"]
-        pango_version = config["pango_version"]
-        with open(output.init,"w") as fw:
-            fw.write(f'''_program = "pangoLEARN"
-__version__ = "{pangolearn_new_v}"
-PANGO_VERSION = "{pango_version}"
-
-__all__ = [
-    "training",
-    "utils"]
-
-from pangoLEARN import *
-
-''')
+        create_init(config["pangoLEARN_version"],config["pango_version"],output.init)
 
 rule filter_alignment:
     input:
@@ -53,78 +41,33 @@ rule filter_alignment:
         fasta = os.path.join(config["datadir"],f"gisaid_{data_date}_all_alignment.fa"),
         full_csv = os.path.join(config["datadir"],f"gisaid_{data_date}_all_metadata.csv")
     output:
-        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        csv = os.path.join(config["outdir"],"lineages.metadata.filtered.csv"),
-        csv_all = os.path.join(config["outdir"],"lineages.designated.csv")
+        matched_seqs = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        not_matched = os.path.join(config["outdir"],"designated.not_matched.csv"),
+        lineages_csv = os.path.join(config["outdir"],"lineages.designated.csv")
     run:
-        csv_len = 0
-        seqs_len = 0
-        lineages = {}
-        all_lineages = {}
-        all_len = 0
-        with open(input.csv,"r") as f:
-            for l in f:
-                l = l.rstrip("\n")
-                name,lineage = l.split(",")
-                
-                lineages[name]=lineage
-                csv_len +=1
-                all_lineages[name]=lineage
-                all_len +=1
-        with open(output.csv,"w") as fw:
-            with open(output.csv_all,"w") as fw2:
-                with open(input.full_csv,"r") as f:
-                
-                    reader = csv.DictReader(f)
-                    header = reader.fieldnames
-
-                    writer = csv.DictWriter(fw, fieldnames=header, lineterminator="\n")
-                    writer.writeheader()
-
-                    writer2 = csv.DictWriter(fw2, fieldnames=header, lineterminator="\n")
-                    writer2.writeheader()
-
-                    for row in reader:
-                        name = row["sequence_name"].replace("SouthAfrica","South_Africa")
-                        if name in lineages:
-                            new_row = row
-                            new_row["lineage"] = lineages[name]
-                            writer.writerow(new_row)
-                        if name in all_lineages:
-                            all_row = row
-                            all_row["lineage"] = all_lineages[name]
-                            writer2.writerow(all_row)
-        written = {}
-        with open(output.fasta,"w") as fw:
-            for record in SeqIO.parse(input.fasta, "fasta"):
-                record.id = record.id.replace("SouthAfrica","South_Africa")
-                if record.id in lineages and not record.id in written:
-                    fw.write(f">{record.id}\n{record.seq}\n")
-
-                    written[record.id]=1
-                    seqs_len +=1
+        process_designations.get_designated_seqs(input.csv,
+                        input.full_csv,
+                        input.fasta,
+                        output.lineages_csv,
+                        output.not_matched,
+                        output.matched_seqs)
         
-        print("Number of sequences in gisaid designated", all_len)
-        print("Number of sequences going into pangolearn training",csv_len)
-        print("Number of sequences found on gisaid", seqs_len)
-        
-
 rule align_with_minimap2:
     input:
-        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        fasta = rules.filter_alignment.output.matched_seqs,
         reference = config["reference"]
     output:
         sam = os.path.join(config["outdir"],"alignment.sam")
     shell:
         """
-        minimap2 -a -x asm5 -t {workflow.cores} \
+        minimap2 -a -x asm20 -t {workflow.cores} \
         {input.reference:q} \
         {input.fasta:q} > {output.sam:q}
         """
 
 rule get_variants:
     input:
-        sam = os.path.join(config["outdir"],"alignment.sam")
+        sam = rules.align_with_minimap2.output.sam,
     output:
         csv = os.path.join(config["outdir"],"variants.csv")
     shell:
@@ -136,18 +79,15 @@ rule get_variants:
         --outfile {output.csv}
         """
 
-rule add_lineage:
+rule add_lineage_to_variants:
     input:
-        csv = os.path.join(config["outdir"],"variants.csv"),
-        lineages = os.path.join(config["outdir"],"lineages.designated.csv")
+        csv = rules.get_variants.output.csv,
+        lineages = rules.filter_alignment.output.lineages_csv
     output:
         csv = os.path.join(config["outdir"],"variants.lineages.csv")
     run:
-        lineages_dict = {}
-        with open(input.lineages,"r") as f:
-            reader= csv.DictReader(f)
-            for row in reader:
-                lineages_dict[row["sequence_name"]] = row["lineage"]
+        lineages_dict = misc.get_dict(input.lineages,"sequence_name","lineage")
+
         with open(output.csv, "w") as fw:
             fw.write("sequence_name,nucleotide_variants,lineage,why_excluded\n")
             with open(input.csv,"r") as f:
@@ -162,8 +102,8 @@ rule add_lineage:
 
 rule downsample:
     input:
-        csv = os.path.join(config["outdir"],"variants.lineages.csv"),
-        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta")
+        csv = rules.add_lineage_to_variants.output.csv,
+        fasta = rules.filter_alignment.output.matched_seqs
     output:
         csv = os.path.join(config["outdir"],"metadata.copy.csv"),
         fasta = os.path.join(config["outdir"],"alignment.downsample.fasta")
@@ -178,10 +118,10 @@ rule downsample:
             False, 
             10)
 
-rule filter_metadata:
+rule filter_metadata_to_just_downsample:
     input:
-        csv = os.path.join(config["outdir"],"metadata.copy.csv"),
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta")
+        csv = rules.filter_alignment.output.lineages_csv,
+        fasta = rules.downsample.output.fasta
     output:
         csv = os.path.join(config["outdir"],"metadata.downsample.csv")
     run:
@@ -199,11 +139,10 @@ rule filter_metadata:
                         lineage = row["lineage"]
                         fw.write(f"{name},{lineage}\n")
 
-
 rule get_relevant_postions:
     input:
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        fasta = rules.downsample.output.fasta,
+        csv = rules.filter_metadata_to_just_downsample.output.csv,
         reference = config["reference"]
     output:
         relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
@@ -212,8 +151,8 @@ rule get_relevant_postions:
 
 rule run_training:
     input:
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        fasta = rules.downsample.output.fasta,
+        csv = rules.filter_metadata_to_just_downsample.output.csv,
         reference = config["reference"],
         relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
     params:
@@ -268,28 +207,8 @@ rule create_hash:
         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
         lin_designation = os.path.join(config["outdir"],"lineages.designated.csv")
     output:
-        csv = os.path.join(config["outdir"],"lineage.hash.csv"),
+        seq_hash = os.path.join(config["outdir"],"lineage.hash.csv"),
         fasta = os.path.join(config["outdir"],"lineage.hash.fasta"),
         hashed_designations = os.path.join(config["outdir"],"designations.hash.csv")
     run:
-        designated = get_dict(input.lin_designation,"sequence_name","lineage")
-
-        hash_map,seq_hash_dict = add_to_hash(input.fasta)
-
-        with open(output.csv,"w") as fw:
-            fw.write("seq_hash,lineage\n")
-            for seq_hash in hash_map:
-                seq_name = hash_map[seq_hash]
-                set_name = designated[seq_name]
-                fw.write(f"{seq_hash},{set_name}\n")
-        
-        num_seqs = 0
-        with open(output.hashed_designations, "w") as fw2:
-            fw2.write("taxon,lineage\n")
-            with open(output.fasta, "w") as fw:
-                for seq in seq_hash_dict:
-                    num_seqs +=1
-                    fw.write(f">{seq_hash_dict[seq]}\n{seq}\n")
-                    fw2.write(f"{seq_hash_dict[seq]},{designated[seq_hash_dict[seq]]}\n")
-
-        print("Number of seqs going into training: ",f"{num_seqs}")
+        hashing.create_hash(input.lineage_designations,input.fasta,output.seq_hash,output.hashed_designations,output.fasta)
