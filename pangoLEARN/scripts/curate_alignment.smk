@@ -168,8 +168,8 @@ rule run_training:
         {input.fasta} \
         {input.reference:q} \
         {config[outdir]} \
-        {input.relevant_pos_obj} \
         A \
+        {input.relevant_pos_obj} \
         > {output.txt:q}
         """
 

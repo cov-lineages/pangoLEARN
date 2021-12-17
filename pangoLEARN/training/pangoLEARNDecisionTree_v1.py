@@ -21,7 +21,7 @@ sequence_file = sys.argv[2]
 testing_percentage = 0.0000000001
 
 try:
-	relevant_positions = pickle.load(open(sys.argv[5], 'rb'))
+	relevant_positions = pickle.load(open(sys.argv[6], 'rb'))
 	relevant_positions.add(0)
 except:
 	print("No relevant positions loadable.")
@@ -37,7 +37,7 @@ dataList = []
 indiciesToKeep = dict()
 
 referenceId = "Wuhan/WH04/2020"
-referenceLineage = sys.argv[6]
+referenceLineage = sys.argv[5]
 referenceSeq = ""
 
 idToLineage = dict()
