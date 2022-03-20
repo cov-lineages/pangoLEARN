@@ -1,12 +1,15 @@
-import csv
-from Bio import SeqIO
 import os
+import sys
+sys.path.insert(0, '/localdisk/home/s1362711/staging/pangoLEARN')
+
+from Bio import SeqIO
+
 import collections
 import hashlib
 import collections
 import csv
+from pangoLEARN.training.get_lineage_positions import get_relevant_positions
 from Bio import SeqIO
-from pangoLEARN.training import downsample
 from datetime import date
 today = date.today()
 
@@ -51,7 +54,7 @@ config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publi
 rule all:
     input:
         os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        os.path.join(config["outdir"],"decision_tree_rules.zip"),
+        os.path.join(config["outdir"],"lineage_recall_report.txt"),
         os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"lineage.hash.csv")
 
@@ -179,80 +182,52 @@ rule add_lineage:
                     elif name in lineages_dict:
                         fw.write(f"{name},{variants},{lineages_dict[name]},\n")
                         
-
-rule downsample:
+rule filter_metadata:
     input:
         csv = os.path.join(config["outdir"],"variants.lineages.csv"),
         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta")
     output:
-        csv = os.path.join(config["outdir"],"metadata.copy.csv"),
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta")
+        csv = os.path.join(config["outdir"],"metadata.final.csv")
     run:
-        downsample.downsample(
-            input.csv, 
-            output.csv, 
-            input.fasta, 
-            output.fasta, 
-            1, config["outgroups"], 
-            False, 
-            False, 
-            10)
-
-rule filter_metadata:
-    input:
-        csv = os.path.join(config["outdir"],"metadata.copy.csv"),
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta")
-    output:
-        csv = os.path.join(config["outdir"],"metadata.downsample.csv")
-    run:
-        in_downsample = {}
+        in_list = {}
         for record in SeqIO.parse(input.fasta,"fasta"):
-            in_downsample[record.id] = 1
+            in_list[record.id] = 1
 
         with open(output.csv, "w") as fw:
             fw.write("sequence_name,lineage\n")
             with open(input.csv, "r") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    if row["sequence_name"] in in_downsample:
+                    if row["sequence_name"] in in_list:
                         name = row["sequence_name"]
                         lineage = row["lineage"]
                         fw.write(f"{name},{lineage}\n")
 
-
 rule get_relevant_postions:
     input:
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        csv = os.path.join(config["outdir"],"metadata.final.csv"),
         reference = config["reference"]
-    params:
-        path_to_script = quokka_path
     output:
         relevant_pos_obj = os.path.join(config["outdir"],"relevantPositions.pickle"),
-    shell:
-        """
-        python {params.path_to_script}/quokka/getRelevantLocationsObject.py \
-        {input.reference:q} \
-        {input.fasta} \
-        {input.csv:q} \
-        {config[outdir]}
-        """
+    run:
+        get_relevant_positions(input.csv,input.fasta,input.reference,output.relevant_pos_obj)
 
 rule run_training:
     input:
-        fasta = os.path.join(config["outdir"],"alignment.downsample.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.downsample.csv"),
+        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        csv = os.path.join(config["outdir"],"metadata.final.csv"),
         reference = config["reference"],
         relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
     params:
         path_to_script = pangoLEARN_path
     output:
-        headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
+        headers = os.path.join(config["outdir"],"randomForestHeaders_v1.joblib"),
+        model = os.path.join(config["outdir"],"randomForest_v1.joblib"),
         txt = os.path.join(config["outdir"],"training_summary.txt")
     shell:
         """
-        python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
+        python {params.path_to_script}/pangoLEARN/training/pangoLEARNRandomForest_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \
@@ -271,23 +246,6 @@ rule get_recall:
     shell:
         """
         python {params.path_to_script}/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
-        """
-
-rule get_decisions:
-    input:
-        headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
-        txt = rules.run_training.output.txt
-    params:
-        path_to_script = pangoLEARN_path
-    output:
-        txt = os.path.join(config["outdir"],"tree_rules.txt"),
-        zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
-    shell:
-        """
-        python {params.path_to_script}/pangoLEARN/training/getDecisionTreeRules.py \
-        {input.model:q} {input.headers:q} {input.txt:q} \
-        > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
         """
 
 rule create_hash:
