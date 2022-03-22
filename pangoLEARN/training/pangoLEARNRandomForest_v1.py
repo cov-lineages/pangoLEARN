@@ -300,7 +300,7 @@ X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=testing_percentage,
 
 print("training " + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
 
-header_out = os.path.join(sys.argv[4],"15_randomForestHeaders_v1.joblib")
+header_out = os.path.join(sys.argv[4],"randomForestHeaders_v1.joblib")
 joblib.dump(headers, header_out, compress=('lzma', 9))
 
 # instantiate the random forest with 50 trees
@@ -333,7 +333,7 @@ print(metrics.classification_report(y_test, y_pred, digits=3))
 
 # save the model files to compressed joblib files
 # using joblib instead of pickle because these large files need to be compressed
-model_out = os.path.join(sys.argv[4],"15_randomForest_v1.joblib")
+model_out = os.path.join(sys.argv[4],"randomForest_v1.joblib")
 joblib.dump(rf,  model_out, compress=('lzma', 9))
 
 
