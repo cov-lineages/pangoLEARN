@@ -46,7 +46,6 @@ config["trim_start"] = 265
 config["trim_end"] = 29674
 config["lineages_csv"]=f"{pango_designation_path}/lineages.csv"
 config["reference"] = f"{pangolin_path}/pangolin/data/reference.fasta"
-config["outgroups"] = f"{pangoLEARN_path}/pangoLEARN/training/outgroups.csv"
 config["genbank_ref"] = f"{pangoLEARN_path}/pangoLEARN/training/WH04.gb"
 config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
 
