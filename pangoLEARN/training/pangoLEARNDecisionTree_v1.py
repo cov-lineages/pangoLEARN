@@ -33,6 +33,7 @@ dataList = []
 indiciesToKeep = dict()
 
 referenceId = "Wuhan/WH04/2020"
+reference_lineage = "A"
 referenceSeq = ""
 
 idToLineage = dict()
@@ -85,7 +86,7 @@ def getDataLine(seqId, seq):
 def readInAndFormatData():
 
 	# add the data line for the reference seq
-	idToLineage[referenceId] = "A"
+	idToLineage[referenceId] = reference_lineage
 	dataList.append(getDataLine(referenceId, referenceSeq))
 
 	# create a dictionary of sequence ids to their assigned lineages
@@ -293,6 +294,9 @@ pima = pd.get_dummies(pima, columns=dummyHeaders)
 # get rid of the fake data we just added
 pima.drop(pima.tail(len(categories)).index, inplace=True)
 
+checkpoint_file = os.path.join(sys.argv[4], "pima.pickle")
+pima.to_pickle(checkpoint_file)
+
 feature_cols = list(pima)
 print(feature_cols)
 
@@ -301,8 +305,10 @@ h = feature_cols.pop(0)
 X = pima[feature_cols]
 y = pima[h]
 
+
 # separate the data frame into testing/training data sets. 25% of the data will be used for training, 75% for test.
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=testing_percentage,random_state=0)
+
 
 print("training " + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
 
