@@ -1,7 +1,13 @@
 from Bio import SeqIO
 import os
-
+import csv
 import sys
+
+import collections
+import hashlib
+import collections
+import csv
+
 def version_from_init(init_file):
     version=None
     with open(init_file, "r") as fr:
