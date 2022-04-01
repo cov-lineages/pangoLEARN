@@ -1,4 +1,34 @@
 from Bio import SeqIO
+import os
+
+import sys
+def version_from_init(init_file):
+    version=None
+    with open(init_file, "r") as fr:
+        for l in fr:
+            if l.startswith("__version__"):
+                l = l.rstrip("\n")
+                version = l.split('=')[1]
+                version = version.replace('"',"").replace(" ","")
+                break
+    return version
+
+def get_pango_version(pango_path):
+    version =""
+
+    for r,d,f in os.walk(pango_path):
+        for fn in f:
+            if fn == "__init__.py":
+                version = version_from_init(os.path.join(r, fn))
+                if not version:
+                    continue
+    print("Pango version is:", version)
+
+    if not version:
+        sys.sterr.write("No version found at pango path")
+        sys.exit(-1)
+    else:
+        return version
 
 def get_hash_string(record):
     seq = str(record.seq).upper().encode()

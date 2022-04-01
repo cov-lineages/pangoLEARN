@@ -20,6 +20,8 @@ repo_path = config["repo_path"].rstrip("/")
 pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
 pango_designation_path = os.path.join(repo_path, "pango-designation")
 
+config["pango_version"] = get_pango_version(pango_designation_path)
+
 data_date = config["data_date"]
 config["trim_start"] = 265
 config["trim_end"] = 29674
@@ -34,6 +36,7 @@ rule all:
         os.path.join(config["outdir"],"lineage_recall_report.txt"),
         os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"pangolin_data.init.py"),
+        os.path.join(config["outdir"],"training_summary.rf.txt"),
         os.path.join(config["outdir"],"decision_tree_rules.txt"),
         os.path.join(config["outdir"],"lineage.hash.csv")
 
@@ -208,7 +211,30 @@ rule get_relevant_postions:
     run:
         get_relevant_positions(input.csv,input.fasta,input.reference,output.relevant_pos_obj)
 
-rule run_training:
+rule run_rf_training:
+    input:
+        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+        csv = os.path.join(config["outdir"],"metadata.final.csv"),
+        reference = config["reference"],
+        relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
+    params:
+        path_to_script = pangoLEARN_path
+    output:
+        headers = os.path.join(config["outdir"],"randomForestHeaders_v1.joblib"),
+        model = os.path.join(config["outdir"],"randomForest_v1.joblib"),
+        txt = os.path.join(config["outdir"],"training_summary.rf.txt")
+    shell:
+        """
+        python {params.path_to_script}/pangoLEARN/training/pangoLEARNRandomForest_v1.py \
+        {input.csv:q} \
+        {input.fasta} \
+        {input.reference:q} \
+        {config[outdir]} \
+        {input.relevant_pos_obj} \
+        > {output.txt:q}
+        """
+
+rule run_dt_training:
     input:
         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
         csv = os.path.join(config["outdir"],"metadata.final.csv"),
@@ -219,13 +245,10 @@ rule run_training:
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
-        txt = os.path.join(config["outdir"],"training_summary.dt.txt"),
-        headers = os.path.join(config["outdir"],"randomForestHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"randomForest_v1.joblib"),
-        txt = os.path.join(config["outdir"],"training_summary.rf.txt")
+        txt = os.path.join(config["outdir"],"training_summary.dt.txt")
     shell:
         """
-        python {params.path_to_script}/pangoLEARN/training/pangoLEARNRandomForest_v1.py \
+        python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \
@@ -248,17 +271,17 @@ rule get_decisions:
         > {output.txt:q}
         """
 
-rule get_recall:
-    input:
-        txt = rules.run_rf_training.output.txt
-    params:
-        path_to_script = pangoLEARN_path
-    output:
-        txt = os.path.join(config["outdir"],"lineage_recall_report.txt")
-    shell:
-        """
-        python {params.path_to_script}/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
-        """
+# rule get_recall:
+#     input:
+#         txt = rules.run_rf_training.output.txt
+#     params:
+#         path_to_script = pangoLEARN_path
+#     output:
+#         txt = os.path.join(config["outdir"],"lineage_recall_report.txt")
+#     shell:
+#         """
+#         python {params.path_to_script}/pangoLEARN/training/processOutputFile.py {input.txt} > {output.txt}
+#         """
 
 rule create_hash:
     input:

@@ -352,4 +352,4 @@ def classification_report_with_accuracy_score(y_true, y_pred):
 	return accuracy_score(y_true, y_pred)
 
 # optionally, run 10-fold cross validation (comment this out if not needed as it takes a while to run)
-cross_validation_scores = cross_val_score(rf, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))
+# cross_validation_scores = cross_val_score(rf, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))
