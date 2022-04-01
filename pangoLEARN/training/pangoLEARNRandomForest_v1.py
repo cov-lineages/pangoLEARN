@@ -268,6 +268,10 @@ headers[0] = "lineage"
 
 print("setting up training " + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
 
+# checkpoint_file = os.path.join(sys.argv[4], "dataList.pickle")
+# dataList.to_pickle(checkpoint_file)
+# headers
+
 pima = pd.DataFrame(dataList, columns=headers)
 
 # nucleotide symbols which can appear

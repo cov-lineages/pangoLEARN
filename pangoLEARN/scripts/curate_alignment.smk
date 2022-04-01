@@ -9,43 +9,22 @@ import hashlib
 import collections
 import csv
 from pangoLEARN.training.get_lineage_positions import get_relevant_positions
+from pangoLEARN.training.utils import *
+
 from Bio import SeqIO
 from datetime import date
 today = date.today()
 
-def get_hash_string(record):
-    seq = str(record.seq).upper().encode()
-    hash_object = hashlib.md5(seq)
-    hash_string = hash_object.hexdigest()
-    return hash_string
 
-def get_dict(in_csv,name_column,data_column):
-    this_dict = {}
-    with open(in_csv,"r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            this_dict[row[name_column]] = row[data_column]
-    return this_dict
-
-def add_to_hash(seq_file):
-    hash_map = {}
-    seq_hash = {}
-    for record in SeqIO.parse(seq_file, "fasta"):
-        seq = str(record.seq).upper().encode()
-        hash_object = hashlib.md5(seq)
-        hash_map[hash_object.hexdigest()] = record.id
-        seq_hash[str(record.seq)] = record.id
-    return hash_map,seq_hash
-
-pangoLEARN_path = config["pangoLEARN_path"].rstrip("/")
-pangolin_path = config["pangolin_path"].rstrip("/")
-pango_designation_path = config["pango_designation_path"].rstrip("/")
+repo_path = config["repo_path"].rstrip("/")
+pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
+pango_designation_path = os.path.join(repo_path, "pango-designation")
 
 data_date = config["data_date"]
 config["trim_start"] = 265
 config["trim_end"] = 29674
 config["lineages_csv"]=f"{pango_designation_path}/lineages.csv"
-config["reference"] = f"{pangolin_path}/pangolin/data/reference.fasta"
+config["reference"] = f"{pangoLEARN_path}/pangoLEARN/training/reference.fasta"
 config["genbank_ref"] = f"{pangoLEARN_path}/pangoLEARN/training/WH04.gb"
 config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publish/gisaid"
 
@@ -229,30 +208,7 @@ rule get_relevant_postions:
     run:
         get_relevant_positions(input.csv,input.fasta,input.reference,output.relevant_pos_obj)
 
-rule run_rf_training:
-    input:
-        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.final.csv"),
-        reference = config["reference"],
-        relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
-    params:
-        path_to_script = pangoLEARN_path
-    output:
-        headers = os.path.join(config["outdir"],"randomForestHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"randomForest_v1.joblib"),
-        txt = os.path.join(config["outdir"],"training_summary.rf.txt")
-    shell:
-        """
-        python {params.path_to_script}/pangoLEARN/training/pangoLEARNRandomForest_v1.py \
-        {input.csv:q} \
-        {input.fasta} \
-        {input.reference:q} \
-        {config[outdir]} \
-        {input.relevant_pos_obj} \
-        > {output.txt:q}
-        """
-
-rule run_dt_training:
+rule run_training:
     input:
         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
         csv = os.path.join(config["outdir"],"metadata.final.csv"),
@@ -263,10 +219,13 @@ rule run_dt_training:
     output:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
-        txt = os.path.join(config["outdir"],"training_summary.dt.txt")
+        txt = os.path.join(config["outdir"],"training_summary.dt.txt"),
+        headers = os.path.join(config["outdir"],"randomForestHeaders_v1.joblib"),
+        model = os.path.join(config["outdir"],"randomForest_v1.joblib"),
+        txt = os.path.join(config["outdir"],"training_summary.rf.txt")
     shell:
         """
-        python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
+        python {params.path_to_script}/pangoLEARN/training/pangoLEARNRandomForest_v1.py \
         {input.csv:q} \
         {input.fasta} \
         {input.reference:q} \

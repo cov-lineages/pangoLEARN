@@ -294,8 +294,8 @@ pima = pd.get_dummies(pima, columns=dummyHeaders)
 # get rid of the fake data we just added
 pima.drop(pima.tail(len(categories)).index, inplace=True)
 
-checkpoint_file = os.path.join(sys.argv[4], "pima.pickle")
-pima.to_pickle(checkpoint_file)
+# checkpoint_file = os.path.join(sys.argv[4], "pima.pickle")
+# pima.to_pickle(checkpoint_file)
 
 feature_cols = list(pima)
 print(feature_cols)
