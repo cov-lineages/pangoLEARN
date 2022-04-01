@@ -12,6 +12,8 @@ import os
 from sklearn.model_selection import cross_val_score
 from Bio import SeqIO
 import pickle
+import time
+import os.path
 
 # file with lineage assignments
 lineage_file = sys.argv[1]
@@ -33,7 +35,6 @@ dataList = []
 indiciesToKeep = dict()
 
 referenceId = "Wuhan/WH04/2020"
-reference_lineage = "A"
 referenceSeq = ""
 
 idToLineage = dict()
@@ -86,20 +87,13 @@ def getDataLine(seqId, seq):
 def readInAndFormatData():
 
 	# add the data line for the reference seq
-	idToLineage[referenceId] = reference_lineage
+	idToLineage[referenceId] = "A"
 	dataList.append(getDataLine(referenceId, referenceSeq))
 
 	# create a dictionary of sequence ids to their assigned lineages
-	with open(lineage_file, 'r') as f:
-		for line in f:
-			line = line.strip()
-
-			split = line.split(",")
-
-			idToLineage[split[0]] = split[1]
-
-	# close the file
-	f.close()
+	lineage_designations = pd.read_csv(lineage_file, delimiter=",", dtype=str)
+	for index, row in lineage_designations.iterrows(): 
+		idToLineage[row["sequence_name"]] = row["lineage"]
 
 	seq_dict = {rec.id : rec.seq for rec in SeqIO.parse(sequence_file, "fasta")}
 
@@ -294,9 +288,6 @@ pima = pd.get_dummies(pima, columns=dummyHeaders)
 # get rid of the fake data we just added
 pima.drop(pima.tail(len(categories)).index, inplace=True)
 
-# checkpoint_file = os.path.join(sys.argv[4], "pima.pickle")
-# pima.to_pickle(checkpoint_file)
-
 feature_cols = list(pima)
 print(feature_cols)
 
@@ -305,17 +296,14 @@ h = feature_cols.pop(0)
 X = pima[feature_cols]
 y = pima[h]
 
-
-# separate the data frame into testing/training data sets. 25% of the data will be used for training, 75% for test.
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=testing_percentage,random_state=0)
-
 
 print("training " + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
 
 header_out = os.path.join(sys.argv[4],"decisionTreeHeaders_v1.joblib")
-joblib.dump(headers, header_out, compress=9)
+joblib.dump(headers, header_out, compress=('lzma', 9))
 
-# instantiate the random forest with 1000 trees
+# instantiate the random forest with 50 trees
 dt = DecisionTreeClassifier()
 
 # fit the model
@@ -346,7 +334,8 @@ print(metrics.classification_report(y_test, y_pred, digits=3))
 # save the model files to compressed joblib files
 # using joblib instead of pickle because these large files need to be compressed
 model_out = os.path.join(sys.argv[4],"decisionTree_v1.joblib")
-joblib.dump(dt,  model_out, compress=9)
+joblib.dump(dt,  model_out, compress=('lzma', 9))
+
 
 print("model files created", flush=True)
 
@@ -359,4 +348,4 @@ def classification_report_with_accuracy_score(y_true, y_pred):
 	return accuracy_score(y_true, y_pred)
 
 # optionally, run 10-fold cross validation (comment this out if not needed as it takes a while to run)
-# cross_validation_scores = cross_val_score(dt, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))
+cross_validation_scores = cross_val_score(dt, X=X, y=y, cv=10, scoring=make_scorer(classification_report_with_accuracy_score))
