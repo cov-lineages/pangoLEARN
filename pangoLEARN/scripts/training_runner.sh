@@ -43,9 +43,9 @@ PLEARN_PATH=$REPO_PATH/pangoLEARN
 
 echo "pango designation path $PANGO_PATH"
 echo "pangoLEARN path $PLEARN_PATH"
-PANGO_VERSION=$(git describe --tags --abbrev=0)
 
 cd $PANGO_PATH && git pull #gets any updates to the reports in the data directory
+PANGO_VERSION=$(git describe --tags --abbrev=0)
 
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 echo "--config outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY "
