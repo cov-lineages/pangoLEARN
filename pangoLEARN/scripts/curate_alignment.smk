@@ -20,7 +20,7 @@ repo_path = config["repo_path"].rstrip("/")
 pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
 pango_designation_path = os.path.join(repo_path, "pango-designation")
 
-config["pango_version"] = get_pango_version(pango_designation_path)
+# config["pango_version"] = get_pango_version(pango_designation_path)
 
 data_date = config["data_date"]
 config["trim_start"] = 265
@@ -33,7 +33,7 @@ config["datadir"]= f"/localdisk/home/shared/raccoon-dog/{data_date}_gisaid/publi
 rule all:
     input:
         os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        os.path.join(config["outdir"],"lineage_recall_report.txt"),
+        # os.path.join(config["outdir"],"lineage_recall_report.txt"),
         os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"pangolin_data.init.py"),
         os.path.join(config["outdir"],"training_summary.rf.txt"),
