@@ -14,7 +14,7 @@ from pangoLEARN.training.utils import *
 from Bio import SeqIO
 from datetime import date
 today = date.today()
-
+csv.field_size_limit(sys.maxsize)
 
 repo_path = config["repo_path"].rstrip("/")
 pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
