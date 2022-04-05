@@ -51,9 +51,3 @@ cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the d
 echo "--config outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY "
 echo "pangoLEARN training starting" | mail -s "update lineageTree.pb with pango designation version $PANGO_VERSION" angie@soe.ucsc.edu
 snakemake --snakefile $PLEARN_PATH/pangoLEARN/scripts/curate_alignment.smk --rerun-incomplete --nolock --cores 1 --config repo_path=$REPO_PATH outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY pango_version=$PANGO_VERSION
-
-# cp $OUTDIR/pangolearn.init.py   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/__init__.py
-# cp $OUTDIR/pangolin_data.init.py   /localdisk/home/s1680070/repositories/pangolin-data/pangolin_data/__init__.py
-# # cp $OUTDIR/decision*   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/
-# cp $OUTDIR/metadata.downsample.csv   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/lineages.downsample.csv
-# cp $OUTDIR/lineage.hash.csv   /localdisk/home/s1680070/repositories/pangoLEARN/pangoLEARN/data/lineages.hash.csv

@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, '/localdisk/home/s1362711/staging/pangoLEARN')
+sys.path.insert(0, '/localdisk/home/s1680070/repositories/pangoLEARN')
 
 from Bio import SeqIO
 
@@ -262,13 +262,16 @@ rule get_decisions:
         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
         txt = rules.run_dt_training.output.txt
+    params:
+        path_to_script = pangoLEARN_path
     output:
-        txt = os.path.join(config["outdir"],"decision_tree_rules.txt")
+        txt = os.path.join(config["outdir"],"decision_tree_rules.txt"),
+        zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
     shell:
         """
         python {params.path_to_script}/pangoLEARN/training/getDecisionTreeRules.py \
         {input.model:q} {input.headers:q} {input.txt:q} \
-        > {output.txt:q}
+        > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
         """
 
 # rule get_recall:
