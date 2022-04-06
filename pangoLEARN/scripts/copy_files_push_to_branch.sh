@@ -21,7 +21,6 @@ cp $OUTDIR/metadata.final.csv   $REPO_PATH/pangoLEARN/pangoLEARN/data/lineages.d
 cp $OUTDIR/lineage.hash.csv   $REPO_PATH/pangoLEARN/pangoLEARN/data/lineages.hash.csv
 
 cp $OUTDIR/random*   $REPO_PATH/pangolin-data/pangolin_data/data/
-cp $OUTDIR/random*   $REPO_PATH/pangolin-data/pangolin_data/data/
 cp $OUTDIR/lineage.hash.csv   $REPO_PATH/pangolin-data/pangolin_data/data/lineages.hash.csv
 cp $REPO_PATH/pango-designation/pango_designation/alias_key.json   $REPO_PATH/pangolin-data/pangolin_data/data/
 
