@@ -32,7 +32,7 @@ then
 else
     DATA_DATE=$2
 fi
-echo "$UID training version $DATA_DATE"
+echo "training version $DATA_DATE"
 
 # LATEST_DATA=$(ls -td /localdisk/home/shared/raccoon-dog/2021*_gisaid/publish/gisaid | head -n 1)
 
@@ -46,7 +46,7 @@ echo "pangoLEARN path $PLEARN_PATH"
 
 cd $PANGO_PATH && git pull #gets any updates to the reports in the data directory
 PANGO_VERSION=$(git describe --tags --abbrev=0)
-
+echo $PANGO_VERSION
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
 echo "--config outdir=$OUTDIR data_date=$DATA_DATE pangolearn_version=$TODAY "
 echo "pangoLEARN training starting" | mail -s "update lineageTree.pb with pango designation version $PANGO_VERSION" angie@soe.ucsc.edu

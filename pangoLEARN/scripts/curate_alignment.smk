@@ -147,7 +147,7 @@ rule get_variants:
     input:
         sam = os.path.join(config["outdir"],"alignment.sam")
     output:
-        csv = os.path.join(config["outdir"],"variants.csv")
+        csv = os.path.join(config["outdir"],"variants.csv") #gisaid.mutations.csv
     shell:
         """
         gofasta sam variants -t {workflow.cores} \
@@ -159,7 +159,7 @@ rule get_variants:
 
 rule add_lineage:
     input:
-        csv = os.path.join(config["outdir"],"variants.csv"),
+        csv = os.path.join(config["outdir"],"variants.csv"), #gisaid.mutations.csv
         lineages = os.path.join(config["outdir"],"lineages.designated.csv")
     output:
         csv = os.path.join(config["outdir"],"variants.lineages.csv")
