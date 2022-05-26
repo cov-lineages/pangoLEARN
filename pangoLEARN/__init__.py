@@ -1,6 +1,6 @@
 _program = "pangoLEARN"
-__version__ = "2022-04-22"
-PANGO_VERSION = "v1.8"
+__version__ = "2022-05-23"
+PANGO_VERSION = "v1.9"
 
 __all__ = ["training"]
 
