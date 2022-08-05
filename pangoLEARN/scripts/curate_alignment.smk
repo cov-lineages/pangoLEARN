@@ -37,7 +37,7 @@ rule all:
         os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"pangolin_data.init.py"),
         os.path.join(config["outdir"],"training_summary.rf.txt"),
-        os.path.join(config["outdir"],"decision_tree_rules.txt"),
+        # os.path.join(config["outdir"],"decision_tree_rules.txt"),
         os.path.join(config["outdir"],"lineage.hash.csv")
 
 rule make_plearn_init:
@@ -61,7 +61,7 @@ rule make_pdata_init:
     output:
         init = os.path.join(config["outdir"],"pangolin_data.init.py")
     run:
-        pango_version = config["pango_version"]
+        pango_version = config["pango_version"].lstrip("v")
         with open(output.init,"w") as fw:
             fw.write(f'''_program = "pangolin_data"
 __version__ = "{pango_version}"
@@ -234,45 +234,45 @@ rule run_rf_training:
         > {output.txt:q}
         """
 
-rule run_dt_training:
-    input:
-        fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
-        csv = os.path.join(config["outdir"],"metadata.final.csv"),
-        reference = config["reference"],
-        relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
-    params:
-        path_to_script = pangoLEARN_path
-    output:
-        headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
-        txt = os.path.join(config["outdir"],"training_summary.dt.txt")
-    shell:
-        """
-        python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
-        {input.csv:q} \
-        {input.fasta} \
-        {input.reference:q} \
-        {config[outdir]} \
-        {input.relevant_pos_obj} \
-        > {output.txt:q}
-        """
+# rule run_dt_training:
+#     input:
+#         fasta = os.path.join(config["outdir"],"alignment.filtered.fasta"),
+#         csv = os.path.join(config["outdir"],"metadata.final.csv"),
+#         reference = config["reference"],
+#         relevant_pos_obj = rules.get_relevant_postions.output.relevant_pos_obj
+#     params:
+#         path_to_script = pangoLEARN_path
+#     output:
+#         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
+#         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
+#         txt = os.path.join(config["outdir"],"training_summary.dt.txt")
+#     shell:
+#         """
+#         python {params.path_to_script}/pangoLEARN/training/pangoLEARNDecisionTree_v1.py \
+#         {input.csv:q} \
+#         {input.fasta} \
+#         {input.reference:q} \
+#         {config[outdir]} \
+#         {input.relevant_pos_obj} \
+#         > {output.txt:q}
+#         """
 
-rule get_decisions:
-    input:
-        headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
-        model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
-        txt = rules.run_dt_training.output.txt
-    params:
-        path_to_script = pangoLEARN_path
-    output:
-        txt = os.path.join(config["outdir"],"decision_tree_rules.txt"),
-        zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
-    shell:
-        """
-        python {params.path_to_script}/pangoLEARN/training/getDecisionTreeRules.py \
-        {input.model:q} {input.headers:q} {input.txt:q} \
-        > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
-        """
+# rule get_decisions:
+#     input:
+#         headers = os.path.join(config["outdir"],"decisionTreeHeaders_v1.joblib"),
+#         model = os.path.join(config["outdir"],"decisionTree_v1.joblib"),
+#         txt = rules.run_dt_training.output.txt
+#     params:
+#         path_to_script = pangoLEARN_path
+#     output:
+#         txt = os.path.join(config["outdir"],"decision_tree_rules.txt"),
+#         zipped = os.path.join(config["outdir"],"decision_tree_rules.zip")
+#     shell:
+#         """
+#         python {params.path_to_script}/pangoLEARN/training/getDecisionTreeRules.py \
+#         {input.model:q} {input.headers:q} {input.txt:q} \
+#         > {output.txt:q} && zip {output.zipped:q} {output.txt:q}
+#         """
 
 # rule get_recall:
 #     input:
