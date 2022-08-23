@@ -21,8 +21,20 @@ pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
 pango_designation_path = os.path.join(repo_path, "pango-designation")
 
 # config["pango_version"] = get_pango_version(pango_designation_path)
+/localdisk/home/shared/raccoon-dog/datapipe-latest/publish/gisaid/
+
+def find_path(path):
+    data_date = ""
+    for r,d,f in os.walk(path):
+        for fn in f:
+            if fn.endswith("_all_alignment.fa"):
+                filepath = os.path.join(path,fn)
+                data_date = filepath.split("/")[-1].split("_")[1]
+    print(data_date)
+    return data_date
+
 data_path = config["data_path"]
-data_date = data_path.split("/")[-1].split("_")[1]
+data_date = find_path(data_path)
 config["data_date"]=data_date
 config["trim_start"] = 265
 config["trim_end"] = 29674
