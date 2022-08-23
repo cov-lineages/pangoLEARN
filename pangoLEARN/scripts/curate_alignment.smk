@@ -98,12 +98,15 @@ rule filter_alignment:
         with open(input.csv,"r") as f:
             for l in f:
                 l = l.rstrip("\n")
-                name,lineage = l.split(",")
-                
-                lineages[name]=lineage
-                csv_len +=1
-                all_lineages[name]=lineage
-                all_len +=1
+                try:
+                    name,lineage = l.split(",")
+                    
+                    lineages[name]=lineage
+                    csv_len +=1
+                    all_lineages[name]=lineage
+                    all_len +=1
+                except:
+                    pass
         with open(output.csv,"w") as fw:
             with open(output.csv_all,"w") as fw2:
                 with open(input.full_csv,"r") as f:
