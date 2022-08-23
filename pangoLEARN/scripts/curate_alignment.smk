@@ -21,7 +21,6 @@ pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
 pango_designation_path = os.path.join(repo_path, "pango-designation")
 
 # config["pango_version"] = get_pango_version(pango_designation_path)
-/localdisk/home/shared/raccoon-dog/datapipe-latest/publish/gisaid/
 
 def find_path(path):
     data_date = ""
