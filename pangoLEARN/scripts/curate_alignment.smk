@@ -34,27 +34,27 @@ rule all:
     input:
         os.path.join(config["outdir"],"alignment.filtered.fasta"),
         # os.path.join(config["outdir"],"lineage_recall_report.txt"),
-        os.path.join(config["outdir"],"pangolearn.init.py"),
+        # os.path.join(config["outdir"],"pangolearn.init.py"),
         os.path.join(config["outdir"],"pangolin_data.init.py"),
         os.path.join(config["outdir"],"training_summary.rf.txt"),
         # os.path.join(config["outdir"],"decision_tree_rules.txt"),
         os.path.join(config["outdir"],"lineage.hash.csv")
 
-rule make_plearn_init:
-    output:
-        init = os.path.join(config["outdir"],"pangolearn.init.py")
-    run:
-        pangolearn_new_v = config["pangolearn_version"]
-        pango_version = config["pango_version"]
-        with open(output.init,"w") as fw:
-            fw.write(f'''_program = "pangoLEARN"
-__version__ = "{pangolearn_new_v}"
-PANGO_VERSION = "{pango_version}"
+# rule make_plearn_init:
+#     output:
+#         init = os.path.join(config["outdir"],"pangolearn.init.py")
+#     run:
+#         pangolearn_new_v = config["pangolearn_version"]
+#         pango_version = config["pango_version"]
+#         with open(output.init,"w") as fw:
+#             fw.write(f'''_program = "pangoLEARN"
+# __version__ = "{pangolearn_new_v}"
+# PANGO_VERSION = "{pango_version}"
 
-__all__ = ["training"]
+# __all__ = ["training"]
 
-from pangoLEARN import *
-''')
+# from pangoLEARN import *
+# ''')
 
 
 rule make_pdata_init:
