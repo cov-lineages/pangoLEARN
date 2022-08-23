@@ -19,17 +19,8 @@ fi
 
 echo "Training model version: $TODAY"
 
-
-if [ -z "$1" ]
-then
-    DATA_DATE=$TODAY
-else
-    DATA_DATE=$1
-fi
-echo "training version $DATA_DATE"
-
 REPO_PATH=/localdisk/home/s1680070/repositories
-
+DATA_PATH=/localdisk/home/shared/raccoon-dog/datapipe-latest/publish/gisaid
 PANGO_PATH=$REPO_PATH/pango-designation
 PLEARN_PATH=$REPO_PATH/pangoLEARN
 
@@ -40,6 +31,6 @@ cd $PANGO_PATH && git pull #gets any updates to the reports in the data director
 PANGO_VERSION=$(git describe --tags --abbrev=0)
 echo $PANGO_VERSION
 cd /localdisk/home/shared/raccoon-dog/ #gets any updates to the reports in the data directory
-echo "--config outdir=$OUTDIR data_date=$DATA_DATE "
+echo "--config outdir=$OUTDIR"
 echo "pangoLEARN training starting" | mail -s "update lineageTree.pb with pango designation version $PANGO_VERSION" angie@soe.ucsc.edu
-snakemake --snakefile $PLEARN_PATH/pangoLEARN/scripts/curate_alignment.smk --rerun-incomplete --nolock --cores 1 --config repo_path=$REPO_PATH outdir=$OUTDIR data_date=$DATA_DATE pango_version=$PANGO_VERSION
+snakemake --snakefile $PLEARN_PATH/pangoLEARN/scripts/curate_alignment.smk --rerun-incomplete --nolock --cores 1 --config repo_path=$REPO_PATH outdir=$OUTDIR data_path=$DATA_PATH pango_version=$PANGO_VERSION

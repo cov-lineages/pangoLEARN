@@ -21,8 +21,9 @@ pangoLEARN_path = os.path.join(repo_path, "pangoLEARN")
 pango_designation_path = os.path.join(repo_path, "pango-designation")
 
 # config["pango_version"] = get_pango_version(pango_designation_path)
-
-data_date = config["data_date"]
+data_path = config["data_path"]
+data_date = data_path.split("/")[-1].split("_")[1]
+config["data_date"]=data_date
 config["trim_start"] = 265
 config["trim_end"] = 29674
 config["lineages_csv"]=f"{pango_designation_path}/lineages.csv"
