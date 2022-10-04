@@ -20,8 +20,9 @@ fi
 echo "Training model version: $TODAY"
 
 REPO_PATH="/localdisk/home/s1680070/repositories"
-
+echo REPO_PATH
 DATA_PATH="/localdisk/home/shared/raccoon-dog/datapipe-latest/publish/gisaid"
+echo DATA_PATH
 
 PANGO_PATH="${REPO_PATH}/pango-designation"
 PLEARN_PATH="${REPO_PATH}/pangoLEARN"
